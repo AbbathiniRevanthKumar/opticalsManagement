@@ -9,11 +9,9 @@ export default {
       colors: {
         primary: "#ff8811",
         secondary: "#ffffff",
+        background : "#E6E8EC",
       },
-      container : {
-        center : true,
-        padding : '16px auto'
-      }
+      
     },
   },
   plugins: [],

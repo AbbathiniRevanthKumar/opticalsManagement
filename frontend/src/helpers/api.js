@@ -25,6 +25,14 @@ const api = {
     } catch (error) {
       return error.response.data;
     }
+  },
+  fetchFrameProducts : async ()=>{
+    try {
+      const response = await axios.get(apis.frameProducts);
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
   }
 };
 

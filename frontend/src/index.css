@@ -14,7 +14,7 @@
     @apply px-4 py-1 rounded-xl focus:ring-2 focus:ring-primary outline-none bg-secondary shadow-sm;
   }
   .btn {
-    @apply bg-primary w-full rounded-xl px-2 py-1 cursor-pointer bg-opacity-70 hover:bg-opacity-100 transition-all ease-in-out duration-200 font-semibold ;
+    @apply bg-primary w-full rounded-xl px-2 py-1 cursor-pointer bg-opacity-70 hover:bg-opacity-100 transition-all ease-in-out duration-200 font-semibold;
   }
 
   @keyframes spinner {
@@ -23,7 +23,6 @@
     }
     100% {
       transform: rotate(360deg);
-      
     }
   }
 
@@ -42,6 +41,23 @@
     }
   }
 
+  /* Keyframes for the background loading effect */
+  @keyframes backgroundLoader {
+    0% {
+      opacity: 50%;
+    }
+    50% {
+      opacity: 75%;
+    }
+    100% {
+      opacity: 100%;
+    }
+  }
+
+  /* Background animation class */
+  .backgroundLoader {
+    animation: backgroundLoader 1s ease-in-out forwards;
+  }
 
   .spinner {
     animation: spinner 1s linear infinite;
@@ -50,5 +66,21 @@
   .popper {
     animation: popper 0.6s ease-out;
   }
+
+ /* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 115, 0, 0.6);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+  border-radius: 4px;
+}
 
 }

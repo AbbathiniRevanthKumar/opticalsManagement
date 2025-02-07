@@ -6,7 +6,8 @@ CREATE TABLE frame_material_types
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status INT NOT NULL DEFAULT 1,
-    CONSTRAINT unique_material_type UNIQUE (f_material_code,f_material_name)
+    CONSTRAINT unique_material_type UNIQUE (f_material_name)
+    CONSTRAINT unique_material_code UNIQUE (f_material_code)
 );
 
 CREATE TABLE frame_model_types
@@ -17,7 +18,8 @@ CREATE TABLE frame_model_types
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status INT NOT NULL DEFAULT 1,
-    CONSTRAINT unique_model_type UNIQUE (f_model_code,f_model_name)
+    CONSTRAINT unique_model_type UNIQUE (f_model_name),
+    CONSTRAINT unique_model_code UNIQUE (f_model_code)
 );
 
 CREATE TABLE frame_sizes
@@ -28,7 +30,8 @@ CREATE TABLE frame_sizes
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status INT NOT NULL DEFAULT 1,
-    CONSTRAINT unique_size UNIQUE (f_size_code,f_size)
+    CONSTRAINT unique_size UNIQUE (f_size),
+    CONSTRAINT unique_size_code UNIQUE (f_size_code)
 );
 
 CREATE TABLE frame_companies
@@ -39,7 +42,8 @@ CREATE TABLE frame_companies
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status INT NOT NULL DEFAULT 1,
-    CONSTRAINT unique_company UNIQUE (f_company_code,f_company_name)
+    CONSTRAINT unique_company UNIQUE (f_company_name),
+    CONSTRAINT unique_company_code UNIQUE (f_company_code)
 );
 
 CREATE TABLE frame_prices

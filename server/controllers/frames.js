@@ -4,10 +4,8 @@ const frameModel = require("../models/frames");
 exports.addOrUpdateMaterialTypes = asyncHandler(async (req, res, next) => {
   const { materialCode = "", materialType } = req.body;
   if (!materialType) {
-    res.statusCode = 400;
     throw new Error("Provide mandatory fields");
   }
-  res.statusCode = 400;
   const response = await frameModel.addOrUpdateMaterialType({
     materialCode,
     materialType,
@@ -19,17 +17,14 @@ exports.addOrUpdateMaterialTypes = asyncHandler(async (req, res, next) => {
     });
     return;
   }
-  res.statusCode = 400;
   throw new Error("Please Try agian!");
 });
 
 exports.addOrUpdateModelType = asyncHandler(async (req, res, next) => {
   const { modelCode = "", modelType } = req.body;
   if (!modelType) {
-    res.statusCode = 400;
     throw new Error("Provide mandatory fields");
   }
-  res.statusCode = 400;
   const response = await frameModel.addOrUpdateModelType({
     modelCode,
     modelType,
@@ -41,17 +36,14 @@ exports.addOrUpdateModelType = asyncHandler(async (req, res, next) => {
     });
     return;
   }
-  res.statusCode = 400;
-  throw new Error("Please Try agian!");
+    throw new Error("Please Try agian!");
 });
 
 exports.addOrUpdateSize = asyncHandler(async (req, res, next) => {
   const { sizeCode = "", size } = req.body;
   if (!size) {
-    res.statusCode = 400;
     throw new Error("Provide mandatory fields");
   }
-  res.statusCode = 400;
   const response = await frameModel.addOrUpdateSize({
     sizeCode,
     size,
@@ -63,17 +55,14 @@ exports.addOrUpdateSize = asyncHandler(async (req, res, next) => {
     });
     return;
   }
-  res.statusCode = 400;
   throw new Error("Please Try agian!");
 });
 
 exports.addOrUpdateCompany = asyncHandler(async (req, res, next) => {
   const { companyCode = "", companyName } = req.body;
   if (!companyName) {
-    res.statusCode = 400;
     throw new Error("Provide mandatory fields");
   }
-  res.statusCode = 400;
   const response = await frameModel.addOrUpdateCompany({
     companyCode,
     companyName,
@@ -85,14 +74,12 @@ exports.addOrUpdateCompany = asyncHandler(async (req, res, next) => {
     });
     return;
   }
-  res.statusCode = 400;
   throw new Error("Please Try agian!");
 });
 
 const addPriceDetails = async (priceDetails) => {
   const { purchasePrice, salesPrice, discount = 0 } = priceDetails;
   if (!purchasePrice || !salesPrice) {
-    res.statusCode = 400;
     throw new Error("Provide mandatory price fields");
   }
   const response = await frameModel.addFramePrices({
@@ -103,7 +90,6 @@ const addPriceDetails = async (priceDetails) => {
   if (response.length > 0) {
     return response[0].id;
   }
-  res.statusCode = 400;
   throw new Error("Please Try agian!");
 };
 
@@ -126,7 +112,6 @@ exports.getFrameSubDetailsByProperty = asyncHandler(async (req, res, next) => {
   const { property, id } = req.query;
 
   if (!property) {
-    res.statusCode = 400;
     throw new Error("Provide required params");
   }
 
