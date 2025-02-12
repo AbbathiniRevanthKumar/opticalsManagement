@@ -18,7 +18,7 @@ const Sidebar = ({ isSidebarOpen }) => {
     <div
       className={`${
         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-      }  bg-primary bg-opacity-85 w-12 md:w-fit fixed left-0 top-16 bottom-12 shadow-md pt-12 pb-8 md:py-16 pr-2 rounded-e-full transistion-all ease-in-out duration-300 flex flex-col justify-between items-center overflow-hidden z-20`}
+      }  bg-primary bg-opacity-85 w-12 md:w-fit fixed left-0 top-16 bottom-12 shadow-md pt-12 pb-8 md:py-16 pr-2 rounded-e-full transistion-all ease-in-out duration-300 flex flex-col justify-between items-center overflow-hidden z-30`}
     >
       <div>
         <ul className="flex flex-col justify-center gap-2">

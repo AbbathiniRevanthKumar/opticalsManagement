@@ -99,7 +99,7 @@ const addFrameReferenceIds = async (referenceDetails) => {
   if ((!frameCompanyId, !frameMaterialId, !frameModelId, !sizeId, !priceId)) {
     throw new Error("Provide needed information");
   }
-  const results = await frameModel.addOrUpdateFrameDetailsReferences(
+  const results = await frameModel.addFrameDetailsReferences(
     referenceDetails
   );
   if (results.length > 0) {
@@ -127,10 +127,12 @@ exports.getFrameSubDetailsByProperty = asyncHandler(async (req, res, next) => {
   throw new Error("Error at fetching frame property details");
 });
 
-let today = new Date();
+
 
 exports.addOrUpdateFrameDetails = asyncHandler(async (req, res, next) => {
+  let today = new Date();
   const {
+    frameCode,
     frameName,
     frameCompanyDetails,
     frameMaterialDetails,
@@ -176,6 +178,7 @@ exports.addOrUpdateFrameDetails = asyncHandler(async (req, res, next) => {
   const frameReferencesId = await addFrameReferenceIds(referenceDetails);
 
   const frameDetailsBody = {
+    frameCode,
     frameName,
     frameReferencesId,
     extraDetails,
@@ -184,6 +187,11 @@ exports.addOrUpdateFrameDetails = asyncHandler(async (req, res, next) => {
   };
 
   //add frame details
+  const checkFrameExists = await frameModel.checkFrameDetailsExists(frameDetailsBody);
+  if(checkFrameExists.length > 0)
+  {
+    frameDetailsBody.frameCode = checkFrameExists[0].f_code;
+  }
   const frameDetailsResult = await frameModel.addOrUpdateFrameDetails(
     frameDetailsBody
   );

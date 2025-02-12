@@ -13,19 +13,9 @@ const colDefs = {
       width: "200px",
     },
     {
-      header: "Purchase date",
-      value: "f_purchase_date",
+      header: "Company name",
+      value: "f_company_name",
       width: "180px",
-      cellRender: (params) => {
-        return params.value
-          ? new Date(params.value).toLocaleDateString()
-          : "";
-      },
-    },
-    {
-      header: "Quantity",
-      value: "f_qty",
-      width: "100px",
     },
     {
       header: "Material type",
@@ -37,11 +27,7 @@ const colDefs = {
       value: "f_model_name",
       width: "180px",
     },
-    {
-      header: "Company name",
-      value: "f_company_name",
-      width: "180px",
-    },
+
     {
       header: "Frame size",
       value: "f_size",
@@ -61,17 +47,34 @@ const colDefs = {
       header: "Discount",
       value: "f_discount",
       width: "120px",
-      cellRender : (params)=>{
-        return params.value + " %"
-      }
+      cellRender: (params) => {
+        return params.value + " %";
+      },
+    },
+    {
+      header: "Quantity",
+      value: "f_qty",
+      width: "100px",
+    },
+    {
+      header: "Purchase date",
+      value: "f_purchase_date",
+      width: "180px",
+      cellRender: (params) => {
+        return params.value
+          ? new Date(params.value).toLocaleDateString("en-IN", {
+              timeZone: "Asia/Kolkata",
+            })
+          : "";
+      },
     },
     {
       header: "Extra details",
       value: "f_extra_details",
       width: "200px",
-      cellRender : (params)=>{
-        return params?.value ? params?.value.substring(0,22) + "..." : "";
-      }
+      cellRender: (params) => {
+        return params?.value ? params?.value.substring(0, 22) + "..." : "";
+      },
     },
   ],
 };

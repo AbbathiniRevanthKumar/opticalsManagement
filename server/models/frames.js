@@ -209,19 +209,19 @@ exports.getFrameSubDetailsByProperty = async (property, id = false) => {
   }
   switch (property) {
     case "materialType": {
-      query = `SELECT * FROM frame_material_types`;
+      query = `SELECT id as id,f_material_name as value FROM frame_material_types`;
       break;
     }
     case "modelType": {
-      query = `SELECT * FROM frame_model_types`;
+      query = `SELECT id as id,f_model_name as value FROM frame_model_types`;
       break;
     }
     case "size": {
-      query = `SELECT * FROM frame_sizes`;
+      query = `SELECT id as id,f_size as value FROM frame_sizes`;
       break;
     }
     case "company": {
-      query = `SELECT * FROM frame_companies`;
+      query = `SELECT id as id,f_company_name as value FROM frame_companies`;
       break;
     }
     default: {
@@ -237,19 +237,13 @@ exports.getFrameSubDetailsByProperty = async (property, id = false) => {
   }
 };
 
-exports.addOrUpdateFrameDetailsReferences = async (referenceDetails) => {
+exports.addFrameDetailsReferences = async (referenceDetails) => {
   const frameReferencesInsertQuery = `INSERT INTO frame_details_reference_ids( f_company_id,f_material_id,f_model_id, f_size_id,f_price_id) VALUES($1,$2,$3,$4,$5) 
   ON CONFLICT (f_company_id,f_material_id,f_model_id, f_size_id,f_price_id) 
   DO UPDATE 
     SET
-    f_company_id=EXCLUDED.f_company_id,
-    f_material_id=EXCLUDED.f_material_id,
-    f_model_id=EXCLUDED.f_model_id,
-    f_size_id=EXCLUDED.f_size_id,
-    f_price_id=EXCLUDED.f_price_id,
     updated_at = CURRENT_TIMESTAMP
   RETURNING id `;
-
   await db.query("BEGIN");
   try {
     const { rows } = await db.query(frameReferencesInsertQuery, [
@@ -268,6 +262,15 @@ exports.addOrUpdateFrameDetailsReferences = async (referenceDetails) => {
     );
   }
 };
+exports.checkFrameDetailsExists = async (frameDetails) =>{
+  const query = `SELECT f_code FROM frame_details WHERE f_name='${frameDetails.frameName}' AND f_reference_id = '${frameDetails.frameReferencesId}' AND f_extra_details = '${frameDetails.extraDetails}' AND f_purchase_date = '${frameDetails.purchaseDate}' AND f_qty = '${frameDetails.qty}'`;
+  try {
+    const {rows} = await db.query(query);
+    return rows;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
 exports.addOrUpdateFrameDetails = async (frameDetails) => {
   const frameDetailsInsertQuery = `INSERT INTO frame_details( f_code,f_name,f_reference_id,f_extra_details,f_purchase_date,f_qty ) VALUES($1,$2,$3,$4,$5,$6) 
   ON CONFLICT (f_code) 
@@ -281,13 +284,12 @@ exports.addOrUpdateFrameDetails = async (frameDetails) => {
   RETURNING id`;
 
   const frameDetailsCodeQuery = `UPDATE frame_details SET f_code = $1 WHERE id = $2`;
-  const frameDetailsExists = `SELECT f_code FROM frame_details WHERE f_name = $1 AND f_reference_id = $2`;
+  const frameDetailsExists = `SELECT f_code FROM frame_details WHERE f_code = $1`;
 
   await db.query("BEGIN");
   try {
     const { rows: isExists } = await db.query(frameDetailsExists, [
-      frameDetails.frameName,
-      frameDetails.frameReferencesId,
+      frameDetails.frameCode
     ]);
     let frameCode = "";
     if (isExists.length > 0) {
@@ -342,7 +344,7 @@ exports.getFrameDetails = async (frameCode) => {
     LEFT JOIN frame_sizes f ON f.id = b.f_size_id
     LEFT JOIN frame_companies g ON g.id = b.f_company_id
     ${condition}
-    ORDER BY a.f_code ASC 
+    ORDER BY a.updated_at DESC 
   `;
 
   try {

@@ -6,6 +6,8 @@ import SearchBar from "../layouts/SearchBar";
 import Frames from "../elements/Frames";
 import Lens from "../elements/Lens";
 import Modal from "../Modal/Modal";
+import AddFrames from "../layouts/AddFrames";
+import AddLens from "../layouts/AddLens";
 
 const Stock = () => {
   const [productType, setProductType] = useState("frames");
@@ -57,7 +59,10 @@ const Stock = () => {
               onChangeSearch={onChangeSearch}
             />
             <div className="flex md:hidden items-center justify-end text-secondary ">
-              <button className="btn w-fit p-2 shadow-sm text-black" onClick={()=>setModal(true)}>
+              <button
+                className="btn w-fit p-2 shadow-sm text-black"
+                onClick={() => setModal(true)}
+              >
                 <icons.Add />
               </button>
             </div>
@@ -68,7 +73,10 @@ const Stock = () => {
             <div className="text-primary text-2xl font-bold ">Graph</div>
           </div>
           <div className="flex items-center justify-center w-fit h-full basis-1/4 absolute top-0 right-4 z-10">
-            <div className="text-secondary text-lg  btn bg-primary bg-opacity-90 flex justify-center items-center shadow-sm p-2 cursor-pointer" onClick={()=>setModal(true)}>
+            <div
+              className="text-secondary text-lg  btn bg-primary bg-opacity-90 flex justify-center items-center shadow-sm p-2 cursor-pointer"
+              onClick={() => setModal(true)}
+            >
               <icons.Add />
             </div>
           </div>
@@ -81,12 +89,19 @@ const Stock = () => {
           <Lens searchValue={searchValue} />
         )}
       </div>
-      {modal && (
-        <Modal
-          header={`Add ${productType}`}
-          onCloseModal={() => setModal(false)}
-        />
-      )}
+      <div>
+        {modal && (
+          <Modal
+            header={`Add ${productType}`}
+            onCloseModal={() => setModal(false)}
+          >
+            {productType === "frames" && (
+              <AddFrames onCloseModal={() => setModal(false)} />
+            )}
+            {productType === "lens" && <AddLens />}
+          </Modal>
+        )}
+      </div>
     </div>
   );
 };

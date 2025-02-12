@@ -10,8 +10,7 @@ const Table = (props) => {
     isEdit,
     isDelete,
     pageSize = 5,
-    onClickEdit,
-    onClickDelete,
+    onClickRow,
     isButtons = true,
     fileName = "table_data",
     searchValue,
@@ -25,6 +24,7 @@ const Table = (props) => {
   const [pageNumbers, setPageNumbers] = useState([]);
   const [rowData, setRowData] = useState(data);
   const [search, setSearch] = useState(searchValue);
+  const [totalNoOfPages, setTotalNoOfPages] = useState(0);
 
   useEffect(() => {
     setSearch(searchValue);
@@ -42,14 +42,19 @@ const Table = (props) => {
         tableData.push({});
       }
     }
-    let totalPages = rowData.length / size;
+    let totalPages = Math.ceil(rowData.length / size);
     const pages = [];
-    for (let i = 0; i < totalPages; i++) {
-      pages.push(i + 1);
+
+    const startPage = currentPage > 1 ? currentPage - 1 : currentPage;
+    const endPage =
+      currentPage + 1 > totalPages ? currentPage : currentPage + 1;
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
     }
     setPageNumbers(pages);
     setDisplayData(tableData);
     setTotalRows(rowData.length);
+    setTotalNoOfPages(totalPages);
   }, [rowData, size, currentPage]);
 
   useEffect(() => {
@@ -70,14 +75,10 @@ const Table = (props) => {
       });
     });
     setRowData(filteredData);
+    setCurrentPage(1);
   };
-  const onClick = (type, id) => {
-    if (type === "edit") {
-      onClickEdit(id);
-    }
-    if (type === "delete") {
-      onClickDelete(id);
-    }
+  const onClick = (type, data) => {    
+    onClickRow(type, data);
   };
 
   const downloadData = () => {
@@ -111,12 +112,12 @@ const Table = (props) => {
   return (
     <div className="py-2 flex flex-col gap-2">
       <div className="flex flex-col md:flex-row justify-between items-center basis-2/4 gap-2">
-        <div className="px-4 py-2 flex justify-center">
-          <div className="flex gap-2 items-center">
+        <div className="px-4 py-2 flex justify-center basis-2/4">
+          <div className="flex gap-2 items-center w-full ">
             <span>set</span>
             <select
               type="text"
-              className="input-box"
+              className="input-box w-fit"
               value={size}
               onChange={(e) => {
                 setSize(e.target.value);
@@ -156,7 +157,7 @@ const Table = (props) => {
       </div>
       <div className="bg-secondary h-72 rounded-xl overflow-auto  flex flex-col gap-1 pb-2  scroll-smooth">
         {/* Table Header */}
-        <div className="flex gap-1 w-fit shadow-sm bg-orange-300 sticky top-0 z-10">
+        <div className="flex gap-1 w-fit shadow-sm bg-orange-300 sticky top-0 z-20">
           {columns.map((column) => (
             <div
               key={column.value}
@@ -197,7 +198,7 @@ const Table = (props) => {
                 ))}
               </div>
               {(isEdit || isDelete) && (
-                <div className="flex opacity-40 hover:opacity-100 gap-1  shadow-sm bg-gray-100 sticky right-0 z-10 h-10  ">
+                <div className="flex opacity-100 gap-1  shadow-sm bg-gray-100 sticky right-0 z-10 h-10  ">
                   <div
                     style={{ width: "100px" }}
                     className={`overflow-hidden justify-between flex gap-2  whitespace-nowrap items-center border-r-2 border-primary px-4`}
@@ -205,7 +206,7 @@ const Table = (props) => {
                     {isEdit && Object.keys(row).length > 0 ? (
                       <div
                         className="text-blue-600 cursor-pointer"
-                        onClick={() => onClick("edit", row.id)}
+                        onClick={() => onClick("edit", row)}
                       >
                         {<icons.Edit />}
                       </div>
@@ -215,7 +216,7 @@ const Table = (props) => {
                     {isDelete && Object.keys(row).length > 0 ? (
                       <div
                         className="text-red-600 cursor-pointer"
-                        onClick={() => onClick("delete", row.id)}
+                        onClick={() => onClick("delete", row)}
                       >
                         {<icons.Delete />}
                       </div>
@@ -230,14 +231,23 @@ const Table = (props) => {
         </div>
       </div>
       <div className="flex flex-col md:flex-row gap-2  justify-between items-center px-2">
-        <div>
-          showing{" "}
-          <span className="font-semibold">{(currentPage - 1) * size + 1}</span>{" "}
-          to{" "}
-          <span className="font-semibold">
-            {currentPage * size > totalRows ? totalRows : currentPage * size}
-          </span>{" "}
-          of <span className="font-semibold">{totalRows}</span>
+        <div className="flex gap-2">
+          <div>
+            showing{" "}
+            <span className="font-semibold">
+              {totalRows>0 ? (currentPage - 1) * size + 1 : 0}
+            </span>{" "}
+            to{" "}
+            <span className="font-semibold">
+              {currentPage * size > totalRows ? totalRows : currentPage * size}
+            </span>{" "}
+            of <span className="font-semibold">{totalRows}</span>
+          </div>
+          <span>{"|"}</span>
+          <div>
+            Page <span className="font-semibold">{currentPage}{" "}</span>
+            of <span className="font-semibold">{" "}{totalNoOfPages===0 ? 1 : totalNoOfPages}</span>
+          </div>
         </div>
         <div className="flex gap-2">
           {currentPage > 1 && (
