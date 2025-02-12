@@ -37,10 +37,10 @@ exports.authenticateUser = asyncHandler(async (req, res, next) => {
     if(!token)
     {
         res.statusCode = 403;
-        throw new Error("Authenctiation Error! Provide Auth Token");  
+        throw new Error("Authenctiation Error! Provide Login Credentials");  
     }
     
-    const user = verifyToken(token);
+    const user = await verifyToken(token);
     req.user = user;
     next();
 });
