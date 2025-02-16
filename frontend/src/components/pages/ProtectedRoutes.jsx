@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import Home from "./Home";
 import Stock from "./Stock";
 import Footer from "../layouts/Footer";
+import Settings from "./Settings";
 
 const ProtectedRoutes = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -34,6 +35,7 @@ const ProtectedRoutes = () => {
           <Route path="/" element={<Navigate to={"/app/home"} />} />
           <Route path="/home" element={<Home />} />
           <Route path="/stock" element={<Stock />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </div>
       <Footer />

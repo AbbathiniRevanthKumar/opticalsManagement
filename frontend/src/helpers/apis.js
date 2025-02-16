@@ -6,6 +6,13 @@ const apis = {
   frameProducts : "/products/frames/getFrameDetails",
   getFramesPropertyDetails : "/products/frames/getFramePropertyDetails",
   addFrameDetails : "/products/frames/addFrameDetails",
+  deleteFrame : "/products/frames/deleteFrame",
+  addOrUpdateFrameCompany : "/products/frames/addOrUpdateFrameCompany",
+  addOrUpdateFrameMaterialType : "/products/frames/addOrUpdateFrameMaterialType",
+  addOrUpdateFrameModelType : "/products/frames/addOrUpdateFrameModelType",
+  addOrUpdateFrameSize : "/products/frames/addOrUpdateFrameSize",
+  deleteFrameSubDetailsByProperty : "/products/frames/deleteFrameSubDetailsByProperty",
+  getPurchaseDateTrends : "/products/frames/getPurchaseDateTrends"
 };
 
 export default apis;

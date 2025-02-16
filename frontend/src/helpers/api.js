@@ -10,7 +10,7 @@ const api = {
       return error.response.data;
     }
   },
-  logoutAdminUser : async ()=>{
+  logoutAdminUser: async () => {
     try {
       const response = await axios.get(apis.adminLogout);
       return response.data;
@@ -18,7 +18,7 @@ const api = {
       return error.response.data;
     }
   },
-  fetchAdminUser : async()=>{
+  fetchAdminUser: async () => {
     try {
       const response = await axios.get(apis.fetchAdminUser);
       return response.data;
@@ -26,7 +26,7 @@ const api = {
       return error.response.data;
     }
   },
-  fetchFrameProducts : async ()=>{
+  fetchFrameProducts: async () => {
     try {
       const response = await axios.get(apis.frameProducts);
       return response.data;
@@ -34,22 +34,90 @@ const api = {
       return error.response.data;
     }
   },
-  getFramesPropertyDetails : async(property)=>{
+  getFramesPropertyDetails: async (property) => {
     try {
-      const response = await axios.get(apis.getFramesPropertyDetails+`?property=${property}`);
+      const response = await axios.get(
+        apis.getFramesPropertyDetails + `?property=${property}`
+      );
       return response.data;
     } catch (error) {
       return error.response.data;
     }
   },
-  addFrameDetails : async(body)=>{
+  addFrameDetails: async (body) => {
     try {
-      const response = await axios.post(apis.addFrameDetails,body);
+      const response = await axios.post(apis.addFrameDetails, body);
       return response.data;
     } catch (error) {
       return error.response.data;
     }
-  }
+  },
+  deleteFrame: async (code) => {
+    try {
+      const response = await axios.delete(
+        apis.deleteFrame + `?frameCode=${code}`
+      );
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  addOrUpdateFrameCompany: async (body) => {
+    try {
+      const response = await axios.post(apis.addOrUpdateFrameCompany, body);
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  addOrUpdateFrameMaterialType: async (body) => {
+    try {
+      const response = await axios.post(
+        apis.addOrUpdateFrameMaterialType,
+        body
+      );
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  addOrUpdateFrameModelType: async (body) => {
+    try {
+      const response = await axios.post(apis.addOrUpdateFrameModelType, body);
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  addOrUpdateFrameSize: async (body) => {
+    try {
+      const response = await axios.post(apis.addOrUpdateFrameSize, body);
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  deleteFrameSubDetailsByProperty: async (body) => {
+    try {
+      const response = await axios.delete(
+        apis.deleteFrameSubDetailsByProperty +
+          `?property=${body.property}&id=${body.id}`
+      );
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  getPurchaseDateTrends: async (productType) => {
+    try {
+      const response = await axios.get(
+        apis.getPurchaseDateTrends+`?type=${productType}`
+      );
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
 };
 
 export default api;

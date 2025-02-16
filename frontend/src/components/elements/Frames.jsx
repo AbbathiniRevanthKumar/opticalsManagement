@@ -7,8 +7,10 @@ import AddFrames from "../layouts/AddFrames";
 import Modal from "../Modal/Modal";
 import { useDispatch, useSelector } from "react-redux";
 import { framesChanged } from "../../store/slices/productSlice";
+import { notify } from "../notifier/Notifier";
 
-const Frames = ({ searchValue }) => {
+const Frames = (props) => {
+  const { searchValue } = props;
   const { framesColumns } = columns;
   const [frameData, setFrameData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -26,7 +28,7 @@ const Frames = ({ searchValue }) => {
       fetchFrameProducts();
       dispatch(framesChanged(false));
     }
-  }, [isFramesChanged]);
+  }, [isFramesChanged, dispatch]);
 
   const fetchFrameProducts = async () => {
     setLoading(true);
@@ -47,11 +49,19 @@ const Frames = ({ searchValue }) => {
       setModal(true);
     }
     if (type === "delete") {
+      deleteFrame(data.f_code);
     }
   };
 
-  const deleteFrame = (id) => {
-    console.log(id);
+  const deleteFrame = async (id) => {
+    const response = await api.deleteFrame(id);
+    if (response.success) {
+      dispatch(framesChanged(true));
+      notify.success(response.message);
+      return;
+    }
+    notify.error(response.message);
+    return;
   };
 
   return (

@@ -9,11 +9,13 @@ import {
   Delete,
   Download,
   Mail,
-  Close
+  Close,
+  Settings,
+  ArrowDropDown as DropDown,
+  ArrowRight as DropUp
 } from "@mui/icons-material";
 
-import { FaGlasses as Frame} from 'react-icons/fa6';
-
+import { FaGlasses as Frame } from "react-icons/fa6";
 
 const icons = {
   Home,
@@ -27,8 +29,10 @@ const icons = {
   Delete,
   Download,
   Mail,
-  Close
+  Close,
+  Settings,
+  DropDown,
+  DropUp
 };
-
 
 export default icons;

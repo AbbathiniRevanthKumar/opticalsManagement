@@ -54,6 +54,28 @@
     }
   }
 
+  @keyframes widthExpansion {
+    0% {
+      opacity: 0%;
+      width: 0;
+    }
+    50% {
+      opacity: 50%;
+      width: 50%;
+    }
+    100% {
+      opacity: 100%;
+      width:100%;
+    }
+  }
+
+  .widthExpansion {
+    animation: widthExpansion 0.3s linear;
+  }
+  .widthClose {
+    animation: widthExpansion 0.3s linear reverse;
+  }
+
   /* Background animation class */
   .backgroundLoader {
     animation: backgroundLoader 1s ease-in-out forwards;

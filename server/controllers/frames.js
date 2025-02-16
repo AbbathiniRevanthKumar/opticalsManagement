@@ -36,7 +36,7 @@ exports.addOrUpdateModelType = asyncHandler(async (req, res, next) => {
     });
     return;
   }
-    throw new Error("Please Try agian!");
+  throw new Error("Please Try agian!");
 });
 
 exports.addOrUpdateSize = asyncHandler(async (req, res, next) => {
@@ -99,9 +99,7 @@ const addFrameReferenceIds = async (referenceDetails) => {
   if ((!frameCompanyId, !frameMaterialId, !frameModelId, !sizeId, !priceId)) {
     throw new Error("Provide needed information");
   }
-  const results = await frameModel.addFrameDetailsReferences(
-    referenceDetails
-  );
+  const results = await frameModel.addFrameDetailsReferences(referenceDetails);
   if (results.length > 0) {
     return results[0].id;
   }
@@ -126,8 +124,6 @@ exports.getFrameSubDetailsByProperty = asyncHandler(async (req, res, next) => {
   res.statusCode = 500;
   throw new Error("Error at fetching frame property details");
 });
-
-
 
 exports.addOrUpdateFrameDetails = asyncHandler(async (req, res, next) => {
   let today = new Date();
@@ -187,9 +183,10 @@ exports.addOrUpdateFrameDetails = asyncHandler(async (req, res, next) => {
   };
 
   //add frame details
-  const checkFrameExists = await frameModel.checkFrameDetailsExists(frameDetailsBody);
-  if(checkFrameExists.length > 0)
-  {
+  const checkFrameExists = await frameModel.checkFrameDetailsExists(
+    frameDetailsBody
+  );
+  if (checkFrameExists.length > 0) {
     frameDetailsBody.frameCode = checkFrameExists[0].f_code;
   }
   const frameDetailsResult = await frameModel.addOrUpdateFrameDetails(
@@ -205,12 +202,65 @@ exports.addOrUpdateFrameDetails = asyncHandler(async (req, res, next) => {
 });
 
 exports.getFrameDetails = asyncHandler(async (req, res, next) => {
-  const { frameCode  } = req.query;
+  const { frameCode } = req.query;
 
-  const results = await frameModel.getFrameDetails(
-    frameCode
-  );
+  const results = await frameModel.getFrameDetails(frameCode);
+  if (results.length > 0) {
+    return res.status(200).json({
+      success: true,
+      data: results,
+    });
+  }
+  res.statusCode = 404;
+  throw new Error("Frame not exists");
+});
+
+exports.deleteFrameProduct = asyncHandler(async (req, res, next) => {
+  const { frameCode } = req.query;
+
+  if (!frameCode) {
+    throw new Error("Specify the Frame");
+  }
+  const result = await frameModel.deleteFrameProduct(frameCode);
+  if (!result) throw new Error("Please Try again!");
   return res.status(200).json({
+    success: true,
+    message: "Frame deleted",
+  });
+});
+
+exports.deleteFrameSubDetailsByProperty = asyncHandler(
+  async (req, res, next) => {
+    const { property, id } = req.query;
+
+    if (!property || !id) {
+      throw new Error("Provide required params");
+    }
+
+    const results = await frameModel.deleteFrameSubDetailsByProperty(
+      property,
+      id
+    );
+    if (results > 0) {
+      return res.status(200).json({
+        success: true,
+        message: "Deleted Successfully",
+      });
+    }
+
+    res.statusCode = 500;
+    throw new Error("Error at deleting frame property details");
+  }
+);
+
+exports.getPurchaseDateTrends = asyncHandler(async (req, res, next) => {
+  const {type} = req.query;
+  if(!type)
+  {
+    throw new Error("Provide product type");
+  }
+  const results = await frameModel.getPurchaseDateTrends(type);
+  res.status(200).json({
     success: true,
     data: results,
   });

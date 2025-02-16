@@ -205,23 +205,25 @@ exports.getFrameSubDetailsByProperty = async (property, id = false) => {
   let query = "";
 
   if (id) {
-    condition = ` WHERE id = ${id}`;
+    condition = ` WHERE id = ${id} `;
+  } else {
+    condition = ` ORDER BY updated_at DESC`;
   }
   switch (property) {
     case "materialType": {
-      query = `SELECT id as id,f_material_name as value FROM frame_material_types`;
+      query = `SELECT id as id,f_material_name  as value,f_material_code as code FROM frame_material_types `;
       break;
     }
     case "modelType": {
-      query = `SELECT id as id,f_model_name as value FROM frame_model_types`;
+      query = `SELECT id as id,f_model_name as value,f_model_code  as code FROM frame_model_types `;
       break;
     }
     case "size": {
-      query = `SELECT id as id,f_size as value FROM frame_sizes`;
+      query = `SELECT id as id,f_size as value,f_size_code as code FROM frame_sizes `;
       break;
     }
     case "company": {
-      query = `SELECT id as id,f_company_name as value FROM frame_companies`;
+      query = `SELECT id as id,f_company_name as value,f_company_code as code FROM frame_companies `;
       break;
     }
     default: {
@@ -234,6 +236,42 @@ exports.getFrameSubDetailsByProperty = async (property, id = false) => {
     return rows;
   } catch (error) {
     throw new Error(`Error fetching property details : ${error.message}`);
+  }
+};
+
+exports.deleteFrameSubDetailsByProperty = async (property, id) => {
+  let condition = "";
+  let query = "";
+
+  condition = ` WHERE id = ${id}`;
+
+  switch (property) {
+    case "materialType": {
+      query = `DELETE FROM frame_material_types`;
+      break;
+    }
+    case "modelType": {
+      query = `DELETE FROM frame_model_types`;
+      break;
+    }
+    case "size": {
+      query = `DELETE FROM frame_sizes`;
+      break;
+    }
+    case "company": {
+      query = `DELETE FROM frame_companies`;
+      break;
+    }
+    default: {
+      throw new Error("Invalid Property details");
+    }
+  }
+  query = query + condition;
+  try {
+    const { rowCount } = await db.query(query);
+    return rowCount;
+  } catch (error) {
+    throw new Error(`Error deleting property details : ${error.message}`);
   }
 };
 
@@ -262,15 +300,15 @@ exports.addFrameDetailsReferences = async (referenceDetails) => {
     );
   }
 };
-exports.checkFrameDetailsExists = async (frameDetails) =>{
+exports.checkFrameDetailsExists = async (frameDetails) => {
   const query = `SELECT f_code FROM frame_details WHERE f_name='${frameDetails.frameName}' AND f_reference_id = '${frameDetails.frameReferencesId}' AND f_extra_details = '${frameDetails.extraDetails}' AND f_purchase_date = '${frameDetails.purchaseDate}' AND f_qty = '${frameDetails.qty}'`;
   try {
-    const {rows} = await db.query(query);
+    const { rows } = await db.query(query);
     return rows;
   } catch (error) {
     throw new Error(error.message);
   }
-}
+};
 exports.addOrUpdateFrameDetails = async (frameDetails) => {
   const frameDetailsInsertQuery = `INSERT INTO frame_details( f_code,f_name,f_reference_id,f_extra_details,f_purchase_date,f_qty ) VALUES($1,$2,$3,$4,$5,$6) 
   ON CONFLICT (f_code) 
@@ -289,7 +327,7 @@ exports.addOrUpdateFrameDetails = async (frameDetails) => {
   await db.query("BEGIN");
   try {
     const { rows: isExists } = await db.query(frameDetailsExists, [
-      frameDetails.frameCode
+      frameDetails.frameCode,
     ]);
     let frameCode = "";
     if (isExists.length > 0) {
@@ -354,3 +392,31 @@ exports.getFrameDetails = async (frameCode) => {
     throw new Error(`Error at fetching frame details  : ${error.message}`);
   }
 };
+
+exports.deleteFrameProduct = async (frameCode) => {
+  const deleteQuery = `DELETE FROM frame_details WHERE f_code = '${frameCode}'`;
+  try {
+    const { rowCount } = await db.query(deleteQuery);
+    return rowCount > 0 ? true : false;
+  } catch (error) {
+    throw new Error(`Error at deleting the frame product : ${error.message}`);
+  }
+};
+
+exports.getPurchaseDateTrends = async(type)=>{
+  let query = '';
+  if(type === "frames")
+  {
+    query = 'SELECT f_purchase_date as date,sum(f_qty) as qty FROM frame_details GROUP BY(f_purchase_date) ORDER BY f_purchase_date';
+  }
+  if(type === "lens")
+  {
+    query = "";
+  }
+  try {
+    const {rows} = await db.query(query);
+    return rows;
+  } catch (error) {
+    throw new Error(`Error getting purchase trends`);
+  }
+}

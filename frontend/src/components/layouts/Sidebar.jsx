@@ -2,11 +2,17 @@ import React, { useEffect, useState } from "react";
 import LogoutBtn from "./LogoutBtn";
 import SidebarElement from "./SidebarElement";
 import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Sidebar = ({ isSidebarOpen }) => {
   const sidebarElements = ["Home", "Stock"];
   const location = useLocation();
   const [activeElement, setActiveElement] = useState("Home");
+  const auth = useSelector((state) => state.auth);
+    
+  if ((auth.isAuthenticated && auth.user.role === "super-admin")) {
+    sidebarElements.push("Settings");
+  }
 
   useEffect(() => {
     if (location.pathname === "/app/home") {
