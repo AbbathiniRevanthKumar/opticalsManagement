@@ -42,6 +42,7 @@ exports.loginAdminUser = asyncHandler(async (req, res, next) => {
       id: userDetails[0].id,
       username: userDetails[0].username,
       email: userDetails[0].email,
+      role : userDetails[0].role,
       created_at: userDetails[0].created_at,
     };
     setCookie(payload, res, 200, "Login success");
@@ -52,7 +53,7 @@ exports.loginAdminUser = asyncHandler(async (req, res, next) => {
 });
 
 exports.getAdminUser = async (req, res, next) => {
-  const user = await req.user;
+  const user = req.user;
 
   res.status(200).json({
     success: true,

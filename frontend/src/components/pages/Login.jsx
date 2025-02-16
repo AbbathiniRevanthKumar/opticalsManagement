@@ -23,7 +23,7 @@ const Login = () => {
     setLoading(false);
     if (response.success) {
       notify.success(response.message);
-      dispatch(login());
+      dispatch(login(response.userDetails));
       navigate("/");
       return;
     }
