@@ -1,11 +1,12 @@
 const db = require("../utils/db");
 exports.addAdminUser = async (userDetails) => {
-  const userDetailsInsertQuery = `INSERT INTO admin_users(username,email,password) VALUES($1,$2,$3)`;
+  const userDetailsInsertQuery = `INSERT INTO admin_users(username,email,password,role) VALUES($1,$2,$3,$4)`;
   try {
     const { rowCount } = await db.query(userDetailsInsertQuery, [
       userDetails.username,
       userDetails.email,
       userDetails.password,
+      userDetails.role
     ]);
     if (rowCount) {
       return true;

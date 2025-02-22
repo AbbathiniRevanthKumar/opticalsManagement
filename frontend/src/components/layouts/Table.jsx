@@ -10,7 +10,7 @@ const Table = (props) => {
     isEdit,
     isDelete,
     pageSize = 5,
-    onClickRow,//new 
+    onClickRow,
     isButtons = true,
     fileName = "table_data",
     searchValue,

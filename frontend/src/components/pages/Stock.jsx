@@ -81,7 +81,7 @@ const Stock = () => {
               </div>
             </ClickableBtn>
           </div>
-          <div className="flex items-center justify-between w-full gap-2">
+          <div className="hidden md:flex items-center justify-between w-full gap-2">
             <SearchBar
               placeholder={`search ${productType}`}
               onChangeSearch={onChangeSearch}
@@ -105,6 +105,20 @@ const Stock = () => {
               <Graph data={purchaseTrendsData} />
             </div>
           )}
+        </div>
+        <div className="md:hidden flex items-center justify-between w-full gap-2">
+          <SearchBar
+            placeholder={`search ${productType}`}
+            onChangeSearch={onChangeSearch}
+          />
+          <div className="flex items-center justify-end text-secondary ">
+            <button
+              className="btn w-fit p-1 md:p-2 shadow-sm text-black"
+              onClick={() => setModal(true)}
+            >
+              <icons.Add />
+            </button>
+          </div>
         </div>
       </div>
       <div>

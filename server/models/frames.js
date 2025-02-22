@@ -375,7 +375,8 @@ exports.getFrameDetails = async (frameCode) => {
   }
   const frameDetailsQuery = `
     SELECT a.*,b.f_company_id,b.f_material_id,b.f_model_id,b.f_size_id,b.f_price_id,c.f_material_name,d.f_model_name,e.f_purchase_price,e.f_sales_price,e.f_discount,f.f_size,g.f_company_name FROM frame_details a
-    LEFT JOIN frame_details_reference_ids b ON a.f_reference_id = b.id
+    LEFT JOIN frame_details_reference_ids b ON
+     a.f_reference_id = b.id
     LEFT JOIN frame_material_types c ON c.id = b.f_material_id
     LEFT JOIN frame_model_types d ON d.id = b.f_model_id
     LEFT JOIN frame_prices e ON e.id = b.f_price_id
@@ -403,20 +404,19 @@ exports.deleteFrameProduct = async (frameCode) => {
   }
 };
 
-exports.getPurchaseDateTrends = async(type)=>{
-  let query = '';
-  if(type === "frames")
-  {
-    query = 'SELECT f_purchase_date as date,sum(f_qty) as qty FROM frame_details GROUP BY(f_purchase_date) ORDER BY f_purchase_date';
+exports.getPurchaseDateTrends = async (type) => {
+  let query = "";
+  if (type === "frames") {
+    query =
+      "SELECT f_purchase_date as date,sum(f_qty) as qty FROM frame_details GROUP BY(f_purchase_date) ORDER BY f_purchase_date";
   }
-  if(type === "lens")
-  {
+  if (type === "lens") {
     query = "";
   }
   try {
-    const {rows} = await db.query(query);
+    const { rows } = await db.query(query);
     return rows;
   } catch (error) {
     throw new Error(`Error getting purchase trends`);
   }
-}
+};
