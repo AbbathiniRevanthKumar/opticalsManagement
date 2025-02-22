@@ -4,6 +4,7 @@ const { errorHandler, notFound } = require("./utils/errorHandler");
 const dotenv = require("dotenv").config();
 const adminRoutes = require("./routes/adminRoutes");
 const framesRoutes = require("./routes/framesRoutes");
+const lensRoutes = require("./routes/lensRoutes");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
@@ -17,6 +18,7 @@ app.use(cookieParser());
 
 app.use("/api/admin", adminRoutes);
 app.use("/api/products/frames", framesRoutes);
+app.use("/api/products/lens", lensRoutes);
 
 app.use(errorHandler);
 app.use(notFound);

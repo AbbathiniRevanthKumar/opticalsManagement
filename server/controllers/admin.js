@@ -4,7 +4,7 @@ const adminModel = require("../models/admin");
 const { setCookie } = require("../utils/jwtToken");
 exports.addAdminUser = asyncHandler(async (req, res, next) => {
   const userDetails = req.body;
-  if (!userDetails.email || !userDetails.password || !userDetails.username) {
+  if (!userDetails.email || !userDetails.password || !userDetails.username ||!userDetails.role) {
     res.statusCode = 400;
     throw new Error("All fields are mandatory");
   }
