@@ -27,20 +27,19 @@ exports.setCookie = (payload, res, statusCode, message) => {
 };
 
 verifyToken = async (token) => {
-    const decodedUser = jwt.verify(token,SECRET_KEY);    
-    return decodedUser;
+  const decodedUser = jwt.verify(token, SECRET_KEY);
+  return decodedUser;
 };
 
 exports.authenticateUser = asyncHandler(async (req, res, next) => {
-    const token = req.cookies ? req.cookies?.auth : null;
-    
-    if(!token)
-    {
-        res.statusCode = 403;
-        throw new Error("Authenctiation Error! Provide Login Credentials");  
-    }
-    
-    const user = await verifyToken(token);
-    req.user = user;
-    next();
+  const token = req.cookies ? req.cookies?.auth : null;
+
+  if (!token) {
+    res.statusCode = 403;
+    throw new Error("Authenctiation Error! Provide Login Credentials");
+  }
+
+  const user = await verifyToken(token);
+  req.user = user;
+  next();
 });

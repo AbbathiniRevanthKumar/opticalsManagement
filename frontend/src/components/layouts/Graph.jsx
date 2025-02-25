@@ -6,7 +6,7 @@ const Graph = ({ data }) => {
     <ResponsiveContainer width="100%" height="100%">
       <LineChart
         data={data}
-        margin={{ top: 0, right: 30, left:30, bottom: 0 }}
+        margin={{ top: 48, right: 30, left:30, bottom: 0 }}
       >
         <XAxis dataKey="date" tick={{ fontSize: 10 }} />
         <Tooltip />

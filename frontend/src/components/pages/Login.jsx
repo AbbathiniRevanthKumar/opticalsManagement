@@ -34,9 +34,9 @@ const Login = () => {
     return <Navigate to={"/"} />;
   }
   return (
-    <div className="flex flex-col md:flex-row  h-screen justify-center items-center gap-2 bg-black bg-opacity-5">
+    <div className="flex flex-col md:flex-row h-screen md:justify-center items-center gap-2 bg-black bg-opacity-5 overflow-hidden">
       {loading && <Loader />}
-      <div className="bg-primary p-6  flex flex-col items-center justify-center basis-1/2 rounded-b-full md:rounded-e-full md:rounded-b-none shadow-lg md:w-full">
+      <div className="bg-primary p-6 flex flex-col items-center justify-center basis-1/3 md:basis-1/2 rounded-b-full md:rounded-e-full md:rounded-b-none shadow-lg md:w-full">
         <div>
           <span className="text-9xl font-semibold left-4 relative">M</span>
           <span className="text-8xl font-bold italic -left-4 relative text-white ">
@@ -47,8 +47,8 @@ const Login = () => {
           Mahesh Opticals
         </div>
       </div>
-      <div className="w-full h-screen flex items-center justify-center basis-1/2">
-        <form className="flex flex-col gap-2 border-2 p-4 rounded-xl ring-2 ring-black outline-none">
+      <div className="w-full h-screen flex items-center justify-center basis-2/3 md:basis-1/2">
+        <form className="flex flex-col gap-2 p-4 rounded-xl ring-2 ring-black outline-none">
           <div className="form-element">
             <label htmlFor="email" className="form-label">
               Email *

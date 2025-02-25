@@ -82,7 +82,7 @@ const Table = (props) => {
 
   const downloadData = () => {
     if (!data || data.length === 0) {
-      notify("No data available to download.");
+      notify.error("No data available to download.");
       return;
     }
     const headers = columns.map((col) => col.header).join(",") + "\n";

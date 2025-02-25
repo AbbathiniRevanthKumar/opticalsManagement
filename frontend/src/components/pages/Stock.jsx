@@ -19,7 +19,9 @@ const Stock = () => {
   const [searchValue, setSearchValue] = useState("");
   const [modal, setModal] = useState(false);
   const [purchaseTrendsData, setPurchaseTrendsData] = useState([]);
-  const { isFramesChanged } = useSelector((state) => state.productChange);
+  const { isFramesChanged, isLensChanged } = useSelector(
+    (state) => state.productChange
+  );
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     const getPurchaseTrendData = async () => {
@@ -38,7 +40,7 @@ const Stock = () => {
     setLoading(true);
     getPurchaseTrendData();
     setLoading(false);
-  }, [isFramesChanged, productType]);
+  }, [isFramesChanged, isLensChanged, productType]);
 
   const onChangeSearch = (value) => {
     setSearchValue(value);
@@ -81,7 +83,7 @@ const Stock = () => {
               </div>
             </ClickableBtn>
           </div>
-          <div className="flex items-center justify-between w-full gap-2">
+          <div className="hidden md:flex items-center justify-between w-full gap-2">
             <SearchBar
               placeholder={`search ${productType}`}
               onChangeSearch={onChangeSearch}
@@ -106,6 +108,20 @@ const Stock = () => {
             </div>
           )}
         </div>
+        <div className="md:hidden flex items-center justify-between w-full gap-2">
+          <SearchBar
+            placeholder={`search ${productType}`}
+            onChangeSearch={onChangeSearch}
+          />
+          <div className="flex items-center justify-end text-secondary ">
+            <button
+              className="btn w-fit p-1 md:p-2 shadow-sm text-black"
+              onClick={() => setModal(true)}
+            >
+              <icons.Add />
+            </button>
+          </div>
+        </div>
       </div>
       <div>
         {productType === "frames" ? (
@@ -123,7 +139,9 @@ const Stock = () => {
             {productType === "frames" && (
               <AddFrames onCloseModal={() => setModal(false)} />
             )}
-            {productType === "lens" && <AddLens />}
+            {productType === "lens" && (
+              <AddLens onCloseModal={() => setModal(false)} />
+            )}
           </Modal>
         )}
       </div>
