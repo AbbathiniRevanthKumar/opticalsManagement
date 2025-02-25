@@ -80,12 +80,11 @@ exports.addLensCompanies = asyncHandler(async (req, res, next) => {
 });
 
 const addLensSightDetails = asyncHandler(async (details) => {
-  const { sph, add = "-", cyl = "-", axis = "-" } = details;
+  const { sph, add = "-", cyl = "-0.00" } = details;
 
-  if (!sph || (cyl && !axis) || (axis && !cyl))
-    throw new Error("Provide proper sight details");
+  if (!sph || !cyl) throw new Error("Provide proper sight details");
 
-  const results = await lens_model.addLensSightDetails({ sph, add, cyl, axis });
+  const results = await lens_model.addLensSightDetails({ sph, add, cyl });
   return results;
 });
 
@@ -200,4 +199,34 @@ exports.getLensDetails = asyncHandler(async (req, res, next) => {
     });
   }
   throw new Error("Cannot get lens details");
+});
+
+exports.getLensDetailsByProperty = asyncHandler(async (req, res, next) => {
+  const { property } = req.query;
+  if (!property) {
+    throw new Error("Property param is needed");
+  }
+
+  const results = await lens_model.getDetailsByProperty(property);
+  if (results.length > 0) {
+    return res.status(200).json({
+      success: true,
+      data: results,
+    });
+  }
+  throw new Error(`cannot get lens ${property} details!Try again`);
+});
+
+exports.deleteLensProduct = asyncHandler(async (req, res, next) => {
+  const { lensCode } = req.query;
+
+  if (!lensCode) {
+    throw new Error("Specify the lens");
+  }
+  const result = await lens_model.deleteLensProduct(lensCode);
+  if (!result) throw new Error("Please Try again!");
+  return res.status(200).json({
+    success: true,
+    message: "Lens deleted",
+  });
 });

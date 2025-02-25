@@ -12,7 +12,11 @@ const apis = {
   addOrUpdateFrameModelType : "/products/frames/addOrUpdateFrameModelType",
   addOrUpdateFrameSize : "/products/frames/addOrUpdateFrameSize",
   deleteFrameSubDetailsByProperty : "/products/frames/deleteFrameSubDetailsByProperty",
-  getPurchaseDateTrends : "/products/frames/getPurchaseDateTrends"
+  getPurchaseDateTrends : "/products/frames/getPurchaseDateTrends",
+  getLensDetails : "/products/lens/getLensDetails",
+  getLensDetailsByProperty : "/products/lens/getLensDetailsByProperty",
+  addLensDetails : "/products/lens/addLensDetails",
+  deleteLens : "/products/lens/deleteLens",
 };
 
 export default apis;

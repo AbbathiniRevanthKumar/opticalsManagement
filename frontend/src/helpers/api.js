@@ -111,7 +111,45 @@ const api = {
   getPurchaseDateTrends: async (productType) => {
     try {
       const response = await axios.get(
-        apis.getPurchaseDateTrends+`?type=${productType}`
+        apis.getPurchaseDateTrends + `?type=${productType}`
+      );
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  //lens
+
+  getLensDetails: async () => {
+    try {
+      const response = await axios.get(apis.getLensDetails);
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  getLensDetailsByProperty: async (property) => {
+    try {
+      const response = await axios.get(
+        `${apis.getLensDetailsByProperty}?property=${property}`
+      );
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  addLensDetails: async (data) => {
+    try {
+      const response = await axios.post(apis.addLensDetails, data);
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  deleteLens: async (code) => {
+    try {
+      const response = await axios.delete(
+        apis.deleteLens + `?lensCode=${code}`
       );
       return response.data;
     } catch (error) {

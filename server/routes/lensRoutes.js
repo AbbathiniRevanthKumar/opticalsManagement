@@ -42,4 +42,17 @@ router.get(
   lensController.getLensDetails
 );
 
+router.get(
+  "/getLensDetailsByProperty",
+  authenticateUser,
+  authorizeByRole(["super-admin", "admin"]),
+  lensController.getLensDetailsByProperty
+);
+
+router.delete(
+  "/deleteLens",
+  authenticateUser,
+  authorizeByRole(["super-admin"]),
+  lensController.deleteLensProduct
+);
 module.exports = router;
