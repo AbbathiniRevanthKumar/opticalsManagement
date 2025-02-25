@@ -154,8 +154,8 @@ exports.addLensCompanies = async (details) => {
 };
 
 exports.addLensSightDetails = async (details) => {
-  const query = `INSERT INTO lens_sight_details(spherical,addition,cylinder,axis) VALUES($1,$2,$3,$4) 
-  ON CONFLICT(spherical,addition,cylinder,axis) 
+  const query = `INSERT INTO lens_sight_details(spherical,addition,cylinder) VALUES($1,$2,$3) 
+  ON CONFLICT(spherical,addition,cylinder) 
   DO UPDATE 
     SET updated_at = CURRENT_TIMESTAMP
   RETURNING id;
@@ -166,7 +166,6 @@ exports.addLensSightDetails = async (details) => {
       details.sph,
       details.add,
       details.cyl,
-      details.axis,
     ]);
     if (rows.length > 0) {
       return rows[0].id;
@@ -234,7 +233,8 @@ exports.addLensDetails = async (details) => {
     l_extra_details = EXCLUDED.l_extra_details,
     l_purchase_date = EXCLUDED.l_purchase_date,
     l_qty = EXCLUDED.l_qty,
-    updated_at = CURRENT_TIMESTAMP
+    updated_at = CURRENT_TIMESTAMP,
+    status = 1
   RETURNING id;
   `;
 
@@ -284,11 +284,11 @@ exports.checkLensDetailsExists = async (details) => {
 };
 
 exports.getLensDetails = async (code) => {
-  let condition = "";
+  let condition = "WHERE a.status = 1";
   if (code) {
-    condition = `WHERE l_code = '${String(code).toUpperCase()}'`;
+    condition = ` AND l_code = '${String(code).toUpperCase()}'`;
   }
-  const query = `SELECT a.*,b.l_material_id,b.l_model_id,b.l_type_id,b.l_company_id,c.l_material,d.l_model,e.l_type,f.l_company,g.l_pruchase_price,g.l_sales_price,g.l_discount,h.spherical,h.cylinder,h.addition,h.axis
+  const query = `SELECT a.*,b.l_material_id,b.l_model_id,b.l_type_id,b.l_company_id,c.l_material,d.l_model,e.l_type,f.l_company,g.l_pruchase_price,g.l_sales_price,g.l_discount,h.spherical,h.cylinder,h.addition
   FROM lens_details a
   JOIN lens_reference_details b ON a.l_reference_id = b.id
   JOIN lens_materials c ON b.l_material_id = c.id
@@ -305,5 +305,45 @@ exports.getLensDetails = async (code) => {
     return rows;
   } catch (error) {
     throw new Error(error.message);
+  }
+};
+
+exports.getDetailsByProperty = async (property) => {
+  let query = "";
+  switch (property) {
+    case "materials": {
+      query = `SELECT l_material as name ,id as code FROM lens_materials ORDER BY l_material ASC`;
+      break;
+    }
+    case "models": {
+      query = `SELECT l_model as name ,id as code FROM lens_models ORDER BY l_model ASC`;
+      break;
+    }
+    case "types": {
+      query = `SELECT l_type as name ,id as code FROM lens_types ORDER BY l_type ASC`;
+      break;
+    }
+    case "companies": {
+      query = `SELECT l_company as name ,id as code FROM lens_companies ORDER BY l_company ASC`;
+      break;
+    }
+  }
+  try {
+    const { rows } = await db.query(query);
+    return rows;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+exports.deleteLensProduct = async (lensCode) => {
+  const deleteQuery = `UPDATE lens_details SET status = 0 WHERE l_code = '${lensCode}'`;
+  try {
+    const { rowCount } = await db.query(deleteQuery);
+    console.log(rowCount);
+    
+    return rowCount > 0 ? true : false;
+  } catch (error) {
+    throw new Error(`Error at deleting the lens product : ${error.message}`);
   }
 };

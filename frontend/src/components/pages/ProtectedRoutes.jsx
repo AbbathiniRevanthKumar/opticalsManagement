@@ -7,6 +7,7 @@ import Home from "./Home";
 import Stock from "./Stock";
 import Footer from "../layouts/Footer";
 import Settings from "./Settings";
+import PageNotFound from "./PageNotFound";
 
 const ProtectedRoutes = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -36,6 +37,7 @@ const ProtectedRoutes = () => {
           <Route path="/home" element={<Home />} />
           <Route path="/stock" element={<Stock />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="*" element={<PageNotFound/>}/>
         </Routes>
       </div>
       <Footer />

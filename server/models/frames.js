@@ -408,10 +408,10 @@ exports.getPurchaseDateTrends = async (type) => {
   let query = "";
   if (type === "frames") {
     query =
-      "SELECT f_purchase_date as date,sum(f_qty) as qty FROM frame_details GROUP BY(f_purchase_date) ORDER BY f_purchase_date";
+      "SELECT f_purchase_date as date,sum(f_qty) as qty FROM frame_details WHERE status = 1 GROUP BY(f_purchase_date) ORDER BY f_purchase_date";
   }
   if (type === "lens") {
-    query = "";
+    query = "SELECT l_purchase_date as date,sum(l_qty) as qty FROM lens_details WHERE status = 1 GROUP BY(l_purchase_date)  ORDER BY l_purchase_date ";
   }
   try {
     const { rows } = await db.query(query);

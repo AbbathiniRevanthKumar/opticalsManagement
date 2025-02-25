@@ -19,7 +19,9 @@ const Stock = () => {
   const [searchValue, setSearchValue] = useState("");
   const [modal, setModal] = useState(false);
   const [purchaseTrendsData, setPurchaseTrendsData] = useState([]);
-  const { isFramesChanged } = useSelector((state) => state.productChange);
+  const { isFramesChanged, isLensChanged } = useSelector(
+    (state) => state.productChange
+  );
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     const getPurchaseTrendData = async () => {
@@ -38,7 +40,7 @@ const Stock = () => {
     setLoading(true);
     getPurchaseTrendData();
     setLoading(false);
-  }, [isFramesChanged, productType]);
+  }, [isFramesChanged, isLensChanged, productType]);
 
   const onChangeSearch = (value) => {
     setSearchValue(value);
@@ -137,7 +139,9 @@ const Stock = () => {
             {productType === "frames" && (
               <AddFrames onCloseModal={() => setModal(false)} />
             )}
-            {productType === "lens" && <AddLens />}
+            {productType === "lens" && (
+              <AddLens onCloseModal={() => setModal(false)} />
+            )}
           </Modal>
         )}
       </div>
