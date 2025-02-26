@@ -217,6 +217,22 @@ exports.getLensDetailsByProperty = asyncHandler(async (req, res, next) => {
   throw new Error(`cannot get lens ${property} details!Try again`);
 });
 
+exports.deleteLensDetailsByProperty = asyncHandler(async (req, res, next) => {
+  const { property, id } = req.query;
+  if (!property || !id) {
+    throw new Error("Specify params property and id");
+  }
+
+  const results = await lens_model.deleteDetailsByProperty(property, id);
+  if (results) {
+    return res.status(200).json({
+      success: true,
+      message: "Deleted successfully",
+    });
+  }
+  throw new Error(`cannot delete lens ${property} details!Try again`);
+});
+
 exports.deleteLensProduct = asyncHandler(async (req, res, next) => {
   const { lensCode } = req.query;
 

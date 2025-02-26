@@ -56,16 +56,25 @@
 
   @keyframes widthExpansion {
     0% {
-      opacity: 0%;
-      width: 0;
+      width: 0%;
     }
     50% {
-      opacity: 50%;
       width: 50%;
     }
     100% {
-      opacity: 100%;
       width:100%;
+    }
+  }
+
+  @keyframes widthClose {
+    0% {
+      width: 100%;
+    }
+    50% {
+      width: 50%;
+    }
+    100% {
+      width:0%;
     }
   }
 
@@ -73,7 +82,7 @@
     animation: widthExpansion 0.3s linear;
   }
   .widthClose {
-    animation: widthExpansion 0.3s linear reverse;
+    animation: widthClose 0.3s linear;
   }
 
   /* Background animation class */

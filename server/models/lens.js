@@ -312,19 +312,19 @@ exports.getDetailsByProperty = async (property) => {
   let query = "";
   switch (property) {
     case "materials": {
-      query = `SELECT l_material as name ,id as code FROM lens_materials ORDER BY l_material ASC`;
+      query = `SELECT l_material as name ,id as id,l_material_code as code FROM lens_materials WHERE status = 1 ORDER BY l_material ASC`;
       break;
     }
     case "models": {
-      query = `SELECT l_model as name ,id as code FROM lens_models ORDER BY l_model ASC`;
+      query = `SELECT l_model as name ,id as id,l_model_code as code FROM lens_models WHERE status = 1 ORDER BY l_model ASC`;
       break;
     }
     case "types": {
-      query = `SELECT l_type as name ,id as code FROM lens_types ORDER BY l_type ASC`;
+      query = `SELECT l_type as name ,id as id,l_type_code as code FROM lens_types WHERE status = 1 ORDER BY l_type ASC`;
       break;
     }
     case "companies": {
-      query = `SELECT l_company as name ,id as code FROM lens_companies ORDER BY l_company ASC`;
+      query = `SELECT l_company as name ,id as id,l_company_code as code FROM lens_companies  WHERE status = 1 ORDER BY l_company ASC`;
       break;
     }
   }
@@ -336,12 +336,40 @@ exports.getDetailsByProperty = async (property) => {
   }
 };
 
+exports.deleteDetailsByProperty = async (property,id) => {
+  let query = "";
+  switch (property) {
+    case "materials": {
+      query = `UPDATE lens_materials SET status = 0 WHERE id = ${id}`;
+      break;
+    }
+    case "models": {
+      query = `UPDATE lens_models SET status = 0 WHERE id = ${id}`;
+      break;
+    }
+    case "types": {
+      query = `UPDATE lens_types SET status = 0 WHERE id = ${id}`;
+      break;
+    }
+    case "companies": {
+      query = `UPDATE lens_companies SET status = 0 WHERE id = ${id}`;
+      break;
+    }
+  }
+  try {
+    const { rowCount } = await db.query(query);
+    return rowCount>0 ? true : false;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 exports.deleteLensProduct = async (lensCode) => {
   const deleteQuery = `UPDATE lens_details SET status = 0 WHERE l_code = '${lensCode}'`;
   try {
     const { rowCount } = await db.query(deleteQuery);
     console.log(rowCount);
-    
+
     return rowCount > 0 ? true : false;
   } catch (error) {
     throw new Error(`Error at deleting the lens product : ${error.message}`);

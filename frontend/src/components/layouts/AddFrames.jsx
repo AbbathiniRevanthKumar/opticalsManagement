@@ -49,10 +49,10 @@ const AddFrames = (props) => {
 
   useEffect(() => {
     const propertyDetails = async () => {
-      const company = await setPropertyDetails("company");
-      const material = await setPropertyDetails("materialType");
-      const model = await setPropertyDetails("modelType");
-      const size = await setPropertyDetails("size");
+      const company = await setPropertyDetails("companies");
+      const material = await setPropertyDetails("materials");
+      const model = await setPropertyDetails("models");
+      const size = await setPropertyDetails("sizes");
 
       setCompanyDetails(company);
       setMaterialDetails(material);
@@ -67,7 +67,7 @@ const AddFrames = (props) => {
     if (response.success) {
       const data = response.data;
       const details = data.map((item) => {
-        return { label: item.value, value: item.id };
+        return { label: item.name, value: item.id };
       });
       return details;
     }

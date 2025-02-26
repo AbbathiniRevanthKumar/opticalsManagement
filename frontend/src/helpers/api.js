@@ -138,6 +138,16 @@ const api = {
       return error.response.data;
     }
   },
+  deleteLensDetailsByProperty: async (property,id) => {
+    try {
+      const response = await axios.delete(
+        `${apis.deleteLensDetailsByProperty}?property=${property}&id=${id}`
+      );
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
   addLensDetails: async (data) => {
     try {
       const response = await axios.post(apis.addLensDetails, data);
@@ -151,6 +161,38 @@ const api = {
       const response = await axios.delete(
         apis.deleteLens + `?lensCode=${code}`
       );
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  addLensType: async (data) => {
+    try {
+      const response = await axios.post(apis.addLensType, data);
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  addLensModel: async (data) => {
+    try {
+      const response = await axios.post(apis.addLensModel, data);
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  addLensMaterials: async (data) => {
+    try {
+      const response = await axios.post(apis.addLensMaterials, data);
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  addLensCompany: async (data) => {
+    try {
+      const response = await axios.post(apis.addLensCompany, data);
       return response.data;
     } catch (error) {
       return error.response.data;

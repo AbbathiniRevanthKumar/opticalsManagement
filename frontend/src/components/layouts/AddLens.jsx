@@ -106,7 +106,7 @@ const AddLens = (props) => {
       const options =
         response.data &&
         response.data.map((item) => {
-          return { label: item.name, value: item.code };
+          return { label: item.name, value: item.id };
         });
       return options;
     }

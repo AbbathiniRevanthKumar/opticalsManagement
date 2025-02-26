@@ -55,4 +55,11 @@ router.delete(
   authorizeByRole(["super-admin"]),
   lensController.deleteLensProduct
 );
+
+router.delete(
+  "/deleteLensDetailsByProperty",
+  authenticateUser,
+  authorizeByRole(["super-admin"]),
+  lensController.deleteLensDetailsByProperty
+);
 module.exports = router;
