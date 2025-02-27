@@ -187,7 +187,7 @@ const FrameSettings = () => {
               />
             </div>
           </div>
-          <div className="px-4 bg-secondary py-4 grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-4 md:gap-4 max-h-96 overflow-auto transition-all duration-150 ease-out">
+          <div className="px-4 bg-secondary py-4 grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 md:gap-4 max-h-96 overflow-auto transition-all duration-150 ease-out">
             {items.map((item) => (
               <Chip
                 key={item.value}
