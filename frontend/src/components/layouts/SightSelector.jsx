@@ -5,7 +5,7 @@ const SightSelector = (props) => {
   const { value, handleSightChange } = props;
 
   const [sightValue, setSightValue] = useState(String(value).substring(1));
-  const [sightSign, setSightSign] = useState("-");
+  const [sightSign, setSightSign] = useState(String(value).charAt(0));
   const [sight, setSight] = useState(value);
 
   useEffect(() => {

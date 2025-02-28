@@ -13,6 +13,7 @@ import api from "../../helpers/api";
 import { formatDateForInput } from "../../helpers/help";
 import { useSelector } from "react-redux";
 import Loader from "../layouts/Loader";
+import { useLocation } from "react-router-dom";
 
 const Stock = () => {
   const [productType, setProductType] = useState("frames");
@@ -23,6 +24,24 @@ const Stock = () => {
     (state) => state.productChange
   );
   const [loading, setLoading] = useState(false);
+  const location = useLocation();
+
+  useEffect(()=>{
+    const buttonType = location?.state?.action || null;
+    if(buttonType === "Add Frame")
+    {
+      setProductType("frames");
+      setModal(true);
+      return;
+    }
+    if(buttonType === "Add Lens")
+    {
+      setProductType("lens");
+      setModal(true);
+      return;
+    }
+  },[location]);
+
   useEffect(() => {
     const getPurchaseTrendData = async () => {
       const response = await api.getPurchaseDateTrends(productType);
@@ -45,6 +64,9 @@ const Stock = () => {
   const onChangeSearch = (value) => {
     setSearchValue(value);
   };
+
+  
+  
   return (
     <div className="flex flex-col gap-2">
       {loading && <Loader />}

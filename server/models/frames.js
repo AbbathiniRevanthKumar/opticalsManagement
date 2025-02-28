@@ -205,25 +205,25 @@ exports.getFrameSubDetailsByProperty = async (property, id = false) => {
   let query = "";
 
   if (id) {
-    condition = ` WHERE id = ${id} `;
+    condition = ` WHERE status = 1 AND id = ${id} `;
   } else {
-    condition = ` ORDER BY updated_at DESC`;
+    condition = ` WHERE status = 1 ORDER BY name ASC`;
   }
   switch (property) {
-    case "materialType": {
-      query = `SELECT id as id,f_material_name  as value,f_material_code as code FROM frame_material_types `;
+    case "materials": {
+      query = `SELECT id as id,f_material_name  as name,f_material_code as code FROM frame_material_types `;
       break;
     }
-    case "modelType": {
-      query = `SELECT id as id,f_model_name as value,f_model_code  as code FROM frame_model_types `;
+    case "models": {
+      query = `SELECT id as id,f_model_name as name,f_model_code  as code FROM frame_model_types `;
       break;
     }
-    case "size": {
-      query = `SELECT id as id,f_size as value,f_size_code as code FROM frame_sizes `;
+    case "sizes": {
+      query = `SELECT id as id,f_size as name,f_size_code as code FROM frame_sizes `;
       break;
     }
-    case "company": {
-      query = `SELECT id as id,f_company_name as value,f_company_code as code FROM frame_companies `;
+    case "companies": {
+      query = `SELECT id as id,f_company_name as name,f_company_code as code FROM frame_companies `;
       break;
     }
     default: {
@@ -240,33 +240,27 @@ exports.getFrameSubDetailsByProperty = async (property, id = false) => {
 };
 
 exports.deleteFrameSubDetailsByProperty = async (property, id) => {
-  let condition = "";
-  let query = "";
-
-  condition = ` WHERE id = ${id}`;
-
   switch (property) {
-    case "materialType": {
-      query = `DELETE FROM frame_material_types`;
+    case "materials": {
+      query = `UPDATE frame_material_types SET status = 0 WHERE id =${id}`;
       break;
     }
-    case "modelType": {
-      query = `DELETE FROM frame_model_types`;
+    case "models": {
+      query = `UPDATE  frame_model_types SET status = 0 WHERE id =${id}`;
       break;
     }
-    case "size": {
-      query = `DELETE FROM frame_sizes`;
+    case "sizes": {
+      query = `UPDATE  frame_sizes SET status = 0 WHERE id =${id}`;
       break;
     }
-    case "company": {
-      query = `DELETE FROM frame_companies`;
+    case "companies": {
+      query = `UPDATE  frame_companies SET status = 0 WHERE id =${id}`;
       break;
     }
     default: {
       throw new Error("Invalid Property details");
     }
   }
-  query = query + condition;
   try {
     const { rowCount } = await db.query(query);
     return rowCount;
@@ -367,11 +361,11 @@ exports.addOrUpdateFrameDetails = async (frameDetails) => {
 };
 
 exports.getFrameDetails = async (frameCode) => {
-  let condition = "";
+  let condition = " WHERE a.status = 1";
 
   if (frameCode) {
     frameCode = String(frameCode).toUpperCase();
-    condition = ` WHERE f_code = '${frameCode}'`;
+    condition = ` WHERE f_code = '${frameCode}' AND a.status = 1`;
   }
   const frameDetailsQuery = `
     SELECT a.*,b.f_company_id,b.f_material_id,b.f_model_id,b.f_size_id,b.f_price_id,c.f_material_name,d.f_model_name,e.f_purchase_price,e.f_sales_price,e.f_discount,f.f_size,g.f_company_name FROM frame_details a
@@ -395,7 +389,7 @@ exports.getFrameDetails = async (frameCode) => {
 };
 
 exports.deleteFrameProduct = async (frameCode) => {
-  const deleteQuery = `DELETE FROM frame_details WHERE f_code = '${frameCode}'`;
+  const deleteQuery = `UPDATE frame_details SET status = 0 WHERE f_code = '${frameCode}'`;
   try {
     const { rowCount } = await db.query(deleteQuery);
     return rowCount > 0 ? true : false;
@@ -411,7 +405,8 @@ exports.getPurchaseDateTrends = async (type) => {
       "SELECT f_purchase_date as date,sum(f_qty) as qty FROM frame_details WHERE status = 1 GROUP BY(f_purchase_date) ORDER BY f_purchase_date";
   }
   if (type === "lens") {
-    query = "SELECT l_purchase_date as date,sum(l_qty) as qty FROM lens_details WHERE status = 1 GROUP BY(l_purchase_date)  ORDER BY l_purchase_date ";
+    query =
+      "SELECT l_purchase_date as date,sum(l_qty) as qty FROM lens_details WHERE status = 1 GROUP BY(l_purchase_date)  ORDER BY l_purchase_date ";
   }
   try {
     const { rows } = await db.query(query);

@@ -3,6 +3,7 @@ import LogoutBtn from "./LogoutBtn";
 import SidebarElement from "./SidebarElement";
 import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { routes } from "../../helpers/routes";
 
 const Sidebar = ({ isSidebarOpen }) => {
   const sidebarElements = ["Home", "Stock"];
@@ -15,9 +16,21 @@ const Sidebar = ({ isSidebarOpen }) => {
   }
 
   useEffect(() => {
-    if (location.pathname === "/app/home") {
+    if (location.pathname === routes.protectedRoutes.home) {
       setActiveElement("Home");
+      return;
     }
+    if(location.pathname === routes.protectedRoutes.stocks)
+    {
+      setActiveElement("Stock");
+      return;
+    }
+    if(location.pathname === routes.protectedRoutes.settings)
+    {
+      setActiveElement("Settings");
+      return;
+    }
+    
   }, [location]);
 
   return (

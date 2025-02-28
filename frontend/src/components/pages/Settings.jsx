@@ -9,9 +9,9 @@ const Settings = () => {
   const [isProductOpen, setIsProductOpen] = useState(false);
   const [activeProduct, setActiveProduct] = useState("Frames");
   return (
-    <div className="">
+    <div className="flex flex-col gap-2">
       <Header heading={"SETTINGS"} />
-      <div className="py-2">
+      <div className="flex flex-col gap-2 py-2">
         <div className="flex items-center">
           <ToogleDrop
             name={"Products"}
@@ -28,7 +28,7 @@ const Settings = () => {
                 : "opacity-0 scale-y-0 max-h-0"
             }`}
           >
-            <div className="flex flex-col gap-2 shadow-md p-2 rounded-xl bg-secondary">
+            <div className="flex flex-col gap-2 shadow-md  rounded-xl bg-secondary p-2 py-4">
               <div className="flex justify-end px-4">
                 <Toogle
                   left={"Frames"}
@@ -39,7 +39,7 @@ const Settings = () => {
                   checked={activeProduct === "Lens"}
                 />
               </div>
-              <div className="transition-all duration-150">
+              <div className="transition-all duration-300 ease-linear">
                 {activeProduct === "Frames" && <FramesSettings />}
                 {activeProduct === "Lens" && <LensSettings />}
               </div>
