@@ -202,8 +202,8 @@ exports.addLensPriceDetails = async (details) => {
 };
 
 exports.addLensReferenceIds = async (details) => {
-  const query = `INSERT INTO lens_reference_details(  l_company_id ,l_type_id , l_model_id , l_material_id , l_sight_id , l_price_id ) VALUES($1,$2,$3,$4,$5,$6) 
-  ON CONFLICT ( l_company_id ,l_type_id , l_model_id , l_material_id , l_sight_id , l_price_id ) 
+  const query = `INSERT INTO lens_reference_details(  l_company_id ,l_type_id , l_model_id , l_material_id ) VALUES($1,$2,$3,$4) 
+  ON CONFLICT ( l_company_id ,l_type_id , l_model_id , l_material_id) 
   DO UPDATE 
     SET
     updated_at = CURRENT_TIMESTAMP
@@ -214,8 +214,6 @@ exports.addLensReferenceIds = async (details) => {
       details.typeId,
       details.modelId,
       details.materialId,
-      details.sightId,
-      details.priceId,
     ]);
     return rows[0].id;
   } catch (error) {
@@ -224,8 +222,8 @@ exports.addLensReferenceIds = async (details) => {
 };
 
 exports.addLensDetails = async (details) => {
-  const insertquery = `INSERT INTO lens_details( l_code ,l_name ,l_reference_id , l_extra_details ,l_purchase_date ,l_qty)
-  VALUES($1,$2,$3,$4,$5,$6) 
+  const insertquery = `INSERT INTO lens_details( l_code ,l_name ,l_reference_id , l_extra_details ,l_purchase_date ,l_qty,l_sight_id,l_price_id)
+  VALUES($1,$2,$3,$4,$5,$6,$7,$8) 
   ON CONFLICT (l_code)
   DO UPDATE 
     SET l_name = EXCLUDED.l_name,
@@ -233,6 +231,8 @@ exports.addLensDetails = async (details) => {
     l_extra_details = EXCLUDED.l_extra_details,
     l_purchase_date = EXCLUDED.l_purchase_date,
     l_qty = EXCLUDED.l_qty,
+    l_price_id = EXCLUDED.l_price_id,
+    l_sight_id = EXCLUDED.l_sight_id,
     updated_at = CURRENT_TIMESTAMP,
     status = 1
   RETURNING id;
@@ -249,6 +249,8 @@ exports.addLensDetails = async (details) => {
       details.extraDetails,
       details.purchaseDate,
       details.qty,
+      details.sightId,
+      details.priceId,
     ]);
     if (rows.length > 0 && details.lensCode === "") {
       const code = `LN${String(rows[0].id).padStart(6, "0")}`;
@@ -274,7 +276,7 @@ exports.addLensDetails = async (details) => {
 };
 
 exports.checkLensDetailsExists = async (details) => {
-  const query = `SELECT id,l_code FROM lens_details WHERE l_name='${details.lensName}' AND l_reference_id = '${details.referenceId}' AND l_extra_details ='${details.extraDetails}' AND l_purchase_date='${details.purchaseDate}' AND l_qty = '${details.qty}'`;
+  const query = `SELECT id,l_code FROM lens_details WHERE l_name='${details.lensName}' AND l_reference_id = '${details.referenceId}'`;
   try {
     const { rows } = await db.query(query);
     return rows;
@@ -295,11 +297,10 @@ exports.getLensDetails = async (code) => {
   JOIN lens_models d ON b.l_model_id = d.id
   JOIN lens_types e ON b.l_type_id = e.id
   JOIN lens_companies f ON b.l_company_id =f.id
-  JOIN lens_price_details g ON b.l_price_id = g.id
-  JOIN lens_sight_details h ON b.l_sight_id = h.id
+  JOIN lens_price_details g ON a.l_price_id = g.id
+  JOIN lens_sight_details h ON a.l_sight_id = h.id
   ${condition}
   ORDER BY updated_at DESC;`;
-
   try {
     const { rows } = await db.query(query);
     return rows;
@@ -336,7 +337,7 @@ exports.getDetailsByProperty = async (property) => {
   }
 };
 
-exports.deleteDetailsByProperty = async (property,id) => {
+exports.deleteDetailsByProperty = async (property, id) => {
   let query = "";
   switch (property) {
     case "materials": {
@@ -358,7 +359,7 @@ exports.deleteDetailsByProperty = async (property,id) => {
   }
   try {
     const { rowCount } = await db.query(query);
-    return rowCount>0 ? true : false;
+    return rowCount > 0 ? true : false;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -373,5 +374,42 @@ exports.deleteLensProduct = async (lensCode) => {
     return rowCount > 0 ? true : false;
   } catch (error) {
     throw new Error(`Error at deleting the lens product : ${error.message}`);
+  }
+};
+
+exports.getLensLowStockDetails = async () => {
+  const query = `SELECT l_name AS name, SUM(l_qty) AS qty FROM lens_details 
+                  WHERE l_qty<15 AND status = 1 
+                  GROUP BY l_name 
+                  HAVING SUM(l_qty) < 15
+                  ORDER BY qty ASC;`;
+  try {
+    const { rows } = await db.query(query);
+
+    return rows;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+exports.getLensDetailsByLensName = async (lensName) => {
+  const query = `SELECT * FROM lens_details WHERE l_name = '${lensName}' AND l_qty < 15 ORDER BY l_qty ASC`;
+  try {
+    const { rows } = await db.query(query);
+    return rows;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+exports.updateQty = async (code, qty) => {
+  const query = `UPDATE lens_details SET l_qty = ${qty},updated_at = CURRENT_TIMESTAMP WHERE l_code = '${code}'`;
+
+  try {
+    const { rowCount } = await db.query(query);
+    if (rowCount > 0) return true;
+    return false;
+  } catch (error) {
+    throw new Error(error.message);
   }
 };

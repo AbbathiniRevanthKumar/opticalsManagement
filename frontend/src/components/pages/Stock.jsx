@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Header from "../layouts/Header";
 import ClickableBtn from "../layouts/ClickableBtn";
 import icons from "../../utils/icons";
@@ -14,6 +14,7 @@ import { formatDateForInput } from "../../helpers/help";
 import { useSelector } from "react-redux";
 import Loader from "../layouts/Loader";
 import { useLocation } from "react-router-dom";
+import LowStock from "../elements/LowStock";
 
 const Stock = () => {
   const [productType, setProductType] = useState("frames");
@@ -24,23 +25,55 @@ const Stock = () => {
     (state) => state.productChange
   );
   const [loading, setLoading] = useState(false);
+  const [lowStockData, setLowStockData] = useState([]);
   const location = useLocation();
+  const moreRef = useRef(null);
 
-  useEffect(()=>{
+  const highlightLowStockData = () => {
+    const moreRefType = location.state?.productType;
+    if (moreRefType === "frames") {
+      setProductType("frames");
+    }
+    if (moreRefType === "lens") {
+      setProductType("lens");
+    }
+    setTimeout(() => {
+      if (moreRef.current) {
+        moreRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 300);
+  };
+
+  const getLowStockData = async (buttonType) => {
+    let resposne = null;
+    if (
+      (buttonType && buttonType === "Add Frame") ||
+      productType === "frames"
+    ) {
+      resposne = await api.getFrameLowStockDetails();
+    }
+    if ((buttonType && buttonType === "Add Lens") || productType === "lens") {
+      resposne = await api.getLensLowStockDetails();
+    }
+    setLowStockData(resposne.data);
+    return;
+  };
+
+  useEffect(() => {
     const buttonType = location?.state?.action || null;
-    if(buttonType === "Add Frame")
-    {
+    if (buttonType === "Add Frame") {
       setProductType("frames");
       setModal(true);
       return;
     }
-    if(buttonType === "Add Lens")
-    {
+    if (buttonType === "Add Lens") {
       setProductType("lens");
       setModal(true);
       return;
     }
-  },[location]);
+    getLowStockData(buttonType);
+    if (location?.state) highlightLowStockData();
+  }, [location]);
 
   useEffect(() => {
     const getPurchaseTrendData = async () => {
@@ -58,6 +91,7 @@ const Stock = () => {
     };
     setLoading(true);
     getPurchaseTrendData();
+    getLowStockData();
     setLoading(false);
   }, [isFramesChanged, isLensChanged, productType]);
 
@@ -65,8 +99,6 @@ const Stock = () => {
     setSearchValue(value);
   };
 
-  
-  
   return (
     <div className="flex flex-col gap-2">
       {loading && <Loader />}
@@ -151,6 +183,15 @@ const Stock = () => {
         ) : (
           <Lens searchValue={searchValue} />
         )}
+      </div>
+      <div className="flex ">
+        <div ref={moreRef} className="flex w-full lg:basis-1/2">
+          <LowStock
+            data={lowStockData}
+            header={"Low Stock"}
+            type={productType}
+          />
+        </div>
       </div>
       <div>
         {modal && (

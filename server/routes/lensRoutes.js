@@ -62,4 +62,25 @@ router.delete(
   authorizeByRole(["super-admin"]),
   lensController.deleteLensDetailsByProperty
 );
+
+router.get(
+  "/getLensLowStockDetails",
+  authenticateUser,
+  authorizeByRole(["super-admin", "admin"]),
+  lensController.getLensLowStockDetails
+);
+
+router.get(
+  "/getLensDetailsByLensName",
+  authenticateUser,
+  authorizeByRole(["super-admin", "admin"]),
+  lensController.getLensDetailsByLensName
+);
+
+router.post(
+  "/updateLensQty",
+  authenticateUser,
+  authorizeByRole(["super-admin", "admin"]),
+  lensController.updateQty
+);
 module.exports = router;

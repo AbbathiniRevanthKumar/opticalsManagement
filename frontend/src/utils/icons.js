@@ -12,7 +12,9 @@ import {
   Close,
   Settings,
   ArrowDropDown as DropDown,
-  ArrowRight as DropUp
+  ArrowRight as DropUp,
+  Error as Alert,
+  Store
 } from "@mui/icons-material";
 
 import { FaGlasses as Frame } from "react-icons/fa6";
@@ -32,7 +34,9 @@ const icons = {
   Close,
   Settings,
   DropDown,
-  DropUp
+  DropUp,
+  Alert,
+  Store
 };
 
 export default icons;

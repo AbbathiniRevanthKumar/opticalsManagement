@@ -103,8 +103,8 @@ const addLensPriceDetails = asyncHandler(async (details) => {
 });
 
 const addLensReferenceIds = async (details) => {
-  const { companyId, materialId, modelId, typeId, priceId } = details;
-  if (!companyId || !materialId || !modelId || !typeId || !priceId) {
+  const { companyId, materialId, modelId, typeId } = details;
+  if (!companyId || !materialId || !modelId || !typeId) {
     throw new Error("Provide needed information");
   }
   const results = await lens_model.addLensReferenceIds(details);
@@ -160,19 +160,19 @@ exports.addLensDetails = asyncHandler(async (req, res, next) => {
     materialId: materialDetails.id,
     modelId: modelDetails.id,
     typeId: typeDetails.id,
-    sightId: sightId,
-    priceId: priceId,
   };
 
   const referenceId = await addLensReferenceIds(referenceDetails);
 
   const lensDetails = {
     lensCode: lensCode,
-    lensName: lensName,
+    lensName: lensName.trim(),
     referenceId: referenceId,
     purchaseDate: purchaseDate,
     qty: qty,
     extraDetails: extraDetails,
+    sightId: sightId,
+    priceId: priceId,
   };
   const rows = await lens_model.checkLensDetailsExists(lensDetails);
   if (rows.length > 0) {
@@ -245,4 +245,55 @@ exports.deleteLensProduct = asyncHandler(async (req, res, next) => {
     success: true,
     message: "Lens deleted",
   });
+});
+
+
+exports.getLensLowStockDetails = asyncHandler(async (req, res, next) => {
+  const results = await lens_model.getLensLowStockDetails();
+  if (results.length >= 0) {
+    return res.status(200).json({
+      success: true,
+      data: results,
+    });
+  }
+  throw new Error("Error getting lens lowstock");
+});
+
+exports.getLensDetailsByLensName = asyncHandler(async (req, res, next) => {
+  let { lensName } = req.query;
+  if (!lensName) throw new Error("Provide lens name");
+
+  lensName = lensName.trim();
+  const lensDetails = await lens_model.getLensDetailsByLensName(lensName);
+  
+  if (lensDetails.length == 0)
+    return res.status(200).json({ success: true, data: lensDetails });
+
+  //map each lens to get all details
+  let totalLensDetails = lensDetails.map(async (lens) => {
+    const lensDetail = await lens_model.getLensDetails(lens.l_code);
+    return lensDetail[0];
+  });
+
+  totalLensDetails = await Promise.all(totalLensDetails);
+
+  res.status(200).json({
+    success: true,
+    data: totalLensDetails,
+  });
+});
+
+exports.updateQty = asyncHandler(async (req, res, next) => {
+  const { code, qty } = req.body;
+  if (!code || !qty) {
+    throw new Error("Code and Qty is needed");
+  }
+  const results = await lens_model.updateQty(code, qty);
+  if (results) {
+    return res.status(200).json({
+      success: true,
+      message: "Quantity updated",
+    });
+  }
+  throw new Error("Try again");
 });
