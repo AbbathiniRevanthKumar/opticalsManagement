@@ -270,8 +270,8 @@ exports.deleteFrameSubDetailsByProperty = async (property, id) => {
 };
 
 exports.addFrameDetailsReferences = async (referenceDetails) => {
-  const frameReferencesInsertQuery = `INSERT INTO frame_details_reference_ids( f_company_id,f_material_id,f_model_id, f_size_id,f_price_id) VALUES($1,$2,$3,$4,$5) 
-  ON CONFLICT (f_company_id,f_material_id,f_model_id, f_size_id,f_price_id) 
+  const frameReferencesInsertQuery = `INSERT INTO frame_details_reference_ids( f_company_id,f_material_id,f_model_id, f_size_id) VALUES($1,$2,$3,$4) 
+  ON CONFLICT (f_company_id,f_material_id,f_model_id, f_size_id) 
   DO UPDATE 
     SET
     updated_at = CURRENT_TIMESTAMP
@@ -283,7 +283,6 @@ exports.addFrameDetailsReferences = async (referenceDetails) => {
       referenceDetails.frameMaterialId,
       referenceDetails.frameModelId,
       referenceDetails.sizeId,
-      referenceDetails.priceId,
     ]);
     await db.query("COMMIT");
     return rows;
@@ -295,7 +294,7 @@ exports.addFrameDetailsReferences = async (referenceDetails) => {
   }
 };
 exports.checkFrameDetailsExists = async (frameDetails) => {
-  const query = `SELECT f_code FROM frame_details WHERE f_name='${frameDetails.frameName}' AND f_reference_id = '${frameDetails.frameReferencesId}' AND f_extra_details = '${frameDetails.extraDetails}' AND f_purchase_date = '${frameDetails.purchaseDate}' AND f_qty = '${frameDetails.qty}'`;
+  const query = `SELECT f_code FROM frame_details WHERE f_name='${frameDetails.frameName}' AND f_reference_id = '${frameDetails.frameReferencesId}'`;
   try {
     const { rows } = await db.query(query);
     return rows;
@@ -304,7 +303,7 @@ exports.checkFrameDetailsExists = async (frameDetails) => {
   }
 };
 exports.addOrUpdateFrameDetails = async (frameDetails) => {
-  const frameDetailsInsertQuery = `INSERT INTO frame_details( f_code,f_name,f_reference_id,f_extra_details,f_purchase_date,f_qty ) VALUES($1,$2,$3,$4,$5,$6) 
+  const frameDetailsInsertQuery = `INSERT INTO frame_details( f_code,f_name,f_reference_id,f_extra_details,f_purchase_date,f_qty,f_price_id ) VALUES($1,$2,$3,$4,$5,$6,$7) 
   ON CONFLICT (f_code) 
   DO UPDATE 
     SET f_name=EXCLUDED.f_name,
@@ -312,7 +311,9 @@ exports.addOrUpdateFrameDetails = async (frameDetails) => {
     f_extra_details=EXCLUDED.f_extra_details,
     f_purchase_date=EXCLUDED.f_purchase_date,
     f_qty=EXCLUDED.f_qty,
-    updated_at = CURRENT_TIMESTAMP
+    f_price_id=EXCLUDED.f_price_id,
+    updated_at = CURRENT_TIMESTAMP,
+    status = 1
   RETURNING id`;
 
   const frameDetailsCodeQuery = `UPDATE frame_details SET f_code = $1 WHERE id = $2`;
@@ -336,6 +337,7 @@ exports.addOrUpdateFrameDetails = async (frameDetails) => {
         frameDetails.extraDetails,
         frameDetails.purchaseDate,
         frameDetails.qty,
+        frameDetails.priceId,
       ]
     );
     if (frameDetailsResult.length > 0) {
@@ -368,12 +370,12 @@ exports.getFrameDetails = async (frameCode) => {
     condition = ` WHERE f_code = '${frameCode}' AND a.status = 1`;
   }
   const frameDetailsQuery = `
-    SELECT a.*,b.f_company_id,b.f_material_id,b.f_model_id,b.f_size_id,b.f_price_id,c.f_material_name,d.f_model_name,e.f_purchase_price,e.f_sales_price,e.f_discount,f.f_size,g.f_company_name FROM frame_details a
+    SELECT a.*,b.f_company_id,b.f_material_id,b.f_model_id,b.f_size_id,c.f_material_name,d.f_model_name,e.f_purchase_price,e.f_sales_price,e.f_discount,f.f_size,g.f_company_name FROM frame_details a
     LEFT JOIN frame_details_reference_ids b ON
      a.f_reference_id = b.id
     LEFT JOIN frame_material_types c ON c.id = b.f_material_id
     LEFT JOIN frame_model_types d ON d.id = b.f_model_id
-    LEFT JOIN frame_prices e ON e.id = b.f_price_id
+    LEFT JOIN frame_prices e ON e.id = a.f_price_id
     LEFT JOIN frame_sizes f ON f.id = b.f_size_id
     LEFT JOIN frame_companies g ON g.id = b.f_company_id
     ${condition}
@@ -413,5 +415,40 @@ exports.getPurchaseDateTrends = async (type) => {
     return rows;
   } catch (error) {
     throw new Error(`Error getting purchase trends`);
+  }
+};
+
+exports.getFrameLowStockDetails = async () => {
+  const query = `SELECT f_name AS name, SUM(f_qty) AS qty FROM frame_details 
+                  WHERE f_qty<10 AND status = 1 
+                  GROUP BY f_name 
+                  HAVING SUM(f_qty) < 10
+                  ORDER BY qty ASC;`;
+  try {
+    const { rows } = await db.query(query);
+    return rows;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+exports.getFrameDetailsByFrameName = async (frameName) => {
+  const query = `SELECT * FROM frame_details WHERE f_name = '${frameName}' AND f_qty < 10 ORDER BY f_qty ASC`;
+  try {
+    const { rows } = await db.query(query);
+    return rows;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+exports.updateQty = async (code, qty) => {
+  const query = `UPDATE frame_details SET f_qty = ${qty},updated_at = CURRENT_TIMESTAMP WHERE f_code = '${code}'`;
+
+  try {
+    const { rowCount } = await db.query(query);
+    if (rowCount > 0) return true;
+    return false;
+  } catch (error) {
+    throw new Error(error.message);
   }
 };

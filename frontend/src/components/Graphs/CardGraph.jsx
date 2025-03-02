@@ -30,7 +30,7 @@ const CardGraph = ({ type }) => {
       <ResponsiveContainer width="100%" height={80}>
         <AreaChart
           data={data}
-          margin={{ top: 0, left: 0, right: 0, bottom: 30 }}
+          margin={{ top: 0, left: 0, right: 0, bottom: 40 }}
         >
           <defs>
             <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
@@ -47,7 +47,12 @@ const CardGraph = ({ type }) => {
             </linearGradient>
           </defs>
           <Tooltip
-            contentStyle={{width:100 ,height:60 ,padding : "0px 10px" ,margin:"-20px 0px 0px 0px"}}
+            contentStyle={{
+              width: 100,
+              height: 60,
+              padding: "0px 10px",
+              margin: "-20px 0px 0px 0px",
+            }}
           />
 
           <Area

@@ -94,9 +94,9 @@ const addPriceDetails = async (priceDetails) => {
 };
 
 const addFrameReferenceIds = async (referenceDetails) => {
-  const { frameCompanyId, frameMaterialId, frameModelId, sizeId, priceId } =
+  const { frameCompanyId, frameMaterialId, frameModelId, sizeId } =
     referenceDetails;
-  if ((!frameCompanyId, !frameMaterialId, !frameModelId, !sizeId, !priceId)) {
+  if ((!frameCompanyId, !frameMaterialId, !frameModelId, !sizeId)) {
     throw new Error("Provide needed information");
   }
   const results = await frameModel.addFrameDetailsReferences(referenceDetails);
@@ -168,18 +168,18 @@ exports.addOrUpdateFrameDetails = asyncHandler(async (req, res, next) => {
     frameMaterialId: frameMaterialDetails.id,
     frameModelId: frameModelDetails.id,
     sizeId: sizeDetails.id,
-    priceId: framePriceId,
   };
 
   const frameReferencesId = await addFrameReferenceIds(referenceDetails);
 
   const frameDetailsBody = {
     frameCode,
-    frameName,
+    frameName: frameName.trim(),
     frameReferencesId,
     extraDetails,
     purchaseDate,
     qty,
+    priceId: framePriceId,
   };
 
   //add frame details
@@ -254,9 +254,8 @@ exports.deleteFrameSubDetailsByProperty = asyncHandler(
 );
 
 exports.getPurchaseDateTrends = asyncHandler(async (req, res, next) => {
-  const {type} = req.query;
-  if(!type)
-  {
+  const { type } = req.query;
+  if (!type) {
     throw new Error("Provide product type");
   }
   const results = await frameModel.getPurchaseDateTrends(type);
@@ -264,4 +263,53 @@ exports.getPurchaseDateTrends = asyncHandler(async (req, res, next) => {
     success: true,
     data: results,
   });
+});
+
+exports.getFrameLowStockDetails = asyncHandler(async (req, res, next) => {
+  const results = await frameModel.getFrameLowStockDetails();
+  if (results.length >= 0) {
+    return res.status(200).json({
+      success: true,
+      data: results,
+    });
+  }
+  throw new Error("Error getting frames lowstock");
+});
+
+exports.getFrameDetailsByFrameName = asyncHandler(async (req, res, next) => {
+  let { frameName } = req.query;
+  if (!frameName) throw new Error("Provide frame name");
+
+  frameName = frameName.trim();
+  const frameDetails = await frameModel.getFrameDetailsByFrameName(frameName);
+  if (frameDetails.length == 0)
+    return res.status(200).json({ success: true, data: frameDetails });
+
+  //map each frame to get all details
+  let totalFrameDetails = frameDetails.map(async (frame) => {
+    const frameDetail = await frameModel.getFrameDetails(frame.f_code);
+    return frameDetail[0];
+  });
+
+  totalFrameDetails = await Promise.all(totalFrameDetails);
+
+  res.status(200).json({
+    success: true,
+    data: totalFrameDetails,
+  });
+});
+
+exports.updateQty = asyncHandler(async (req, res, next) => {
+  const { code, qty } = req.body;
+  if (!code || !qty) {
+    throw new Error("Code and Qty is needed");
+  }
+  const results = await frameModel.updateQty(code, qty);
+  if (results) {
+    return res.status(200).json({
+      success: true,
+      message: "Quantity updated",
+    });
+  }
+  throw new Error("Try again");
 });

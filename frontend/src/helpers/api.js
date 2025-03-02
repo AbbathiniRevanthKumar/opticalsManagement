@@ -118,6 +118,34 @@ const api = {
       return error.response.data;
     }
   },
+  getFrameLowStockDetails: async () => {
+    try {
+      const response = await axios.get(apis.getFrameLowStockDetails);
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+
+  getFrameDetailsByFrameName: async (name) => {
+    try {
+      const response = await axios.get(
+        apis.getFrameDetailsByFrameName + `?frameName=${name}`
+      );
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  updateQty: async (body) => {
+    try {
+      const response = await axios.post(apis.updateQty, body);
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+
   //lens
 
   getLensDetails: async () => {
@@ -138,7 +166,7 @@ const api = {
       return error.response.data;
     }
   },
-  deleteLensDetailsByProperty: async (property,id) => {
+  deleteLensDetailsByProperty: async (property, id) => {
     try {
       const response = await axios.delete(
         `${apis.deleteLensDetailsByProperty}?property=${property}&id=${id}`
@@ -193,6 +221,32 @@ const api = {
   addLensCompany: async (data) => {
     try {
       const response = await axios.post(apis.addLensCompany, data);
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  getLensLowStockDetails: async () => {
+    try {
+      const response = await axios.get(apis.getLensLowStockDetails);
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  getLensDetailsByLensName: async (name) => {
+    try {
+      const response = await axios.get(
+        apis.getLensDetailsByLensName + `?lensName=${name}`
+      );
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  updateLensQty: async (body) => {
+    try {
+      const response = await axios.post(apis.updateLensQty, body);
       return response.data;
     } catch (error) {
       return error.response.data;

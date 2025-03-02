@@ -70,4 +70,25 @@ router.get(
   frameController.getPurchaseDateTrends
 );
 
+router.get(
+  "/getFramesLowStockDetails",
+  authenticateUser,
+  authorizeByRole(["super-admin", "admin"]),
+  frameController.getFrameLowStockDetails
+);
+
+router.get(
+  "/getFrameDetailsByFrameName",
+  authenticateUser,
+  authorizeByRole(["super-admin", "admin"]),
+  frameController.getFrameDetailsByFrameName
+);
+
+router.post(
+  "/updateQty",
+  authenticateUser,
+  authorizeByRole(["super-admin", "admin"]),
+  frameController.updateQty
+);
+
 module.exports = router;

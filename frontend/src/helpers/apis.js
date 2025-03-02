@@ -14,6 +14,10 @@ const apis = {
   deleteFrameSubDetailsByProperty:
     "/products/frames/deleteFrameSubDetailsByProperty",
   getPurchaseDateTrends: "/products/frames/getPurchaseDateTrends",
+  getFrameLowStockDetails : "/products/frames/getFramesLowStockDetails",
+  getFrameDetailsByFrameName : "/products/frames/getFrameDetailsByFrameName",
+  updateQty : "/products/frames/updateQty",
+  //lens
   getLensDetails: "/products/lens/getLensDetails",
   getLensDetailsByProperty: "/products/lens/getLensDetailsByProperty",
   addLensDetails: "/products/lens/addLensDetails",
@@ -23,6 +27,9 @@ const apis = {
   addLensMaterials: "/products/lens/addLensMaterials",
   addLensCompany: "/products/lens/addLensCompany",
   deleteLensDetailsByProperty: "/products/lens/deleteLensDetailsByProperty",
+  getLensLowStockDetails: "/products/lens/getLensLowStockDetails",
+  getLensDetailsByLensName : "/products/lens/getLensDetailsByLensName",
+  updateLensQty : "/products/lens/updateLensQty",
 };
 
 export default apis;
