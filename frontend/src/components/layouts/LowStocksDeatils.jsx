@@ -15,8 +15,8 @@ const LowStocksDeatils = (props) => {
   return (
     <>
       {data && data.length > 0 && (
-        <div className="h-full w-full bg-secondary shadow-md rounded-lg">
-          <div className="flex flex-col gap-2 p-2">
+        <div className="h-full w-full bg-secondary shadow-md rounded-lg p-2">
+          <div className="flex flex-col gap-2 ">
             <div className="bg-danger p-2 rounded-lg text-center font-semibold text-secondary shadow-sm flex justify-center items-center gap-2 w-full  text-nowrap">
               {header}
               {<icons.Alert />}

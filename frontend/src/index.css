@@ -98,6 +98,18 @@
     }
   }
 
+  @keyframes floatButton {
+    0% { 
+      transform: translateY(0);
+    }
+    50% { 
+      transform: translateY(-25%);
+    }
+    100% { 
+      transform: translateY(0);
+    }
+  }
+
   .widthExpansion {
     animation: widthExpansion 0.3s linear;
   }
@@ -109,6 +121,9 @@
     animation: modalLoader 0.3s linear forwards;
   }
 
+  .floatButton {
+    animation: floatButton 2s infinite ease-in-out forwards;
+  }
   /* Background animation class */
   .backgroundLoader {
     animation: backgroundLoader 1s ease-in-out forwards;

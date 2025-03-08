@@ -61,7 +61,7 @@ const Home = () => {
       </div>
       <div className="flex flex-col lg:flex-row w-full">
         {showLowStocks && (
-          <div className="transition-all duration-150 ease-out flex justify-center items-center basis-1/2 w-full py-4 lg:p-2">
+          <div className="transition-all duration-150 ease-out flex justify-center items-center basis-1/2 w-full py-4">
             <LowStocks />
           </div>
         )}

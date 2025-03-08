@@ -252,6 +252,25 @@ const api = {
       return error.response.data;
     }
   },
+  updateLensQty: async (body) => {
+    try {
+      const response = await axios.post(apis.updateLensQty, body);
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
+  sendMail: async (body) => {
+    try {
+      
+      const response = await axios.post(apis.sendMail, body, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  },
 };
 
 export default api;
