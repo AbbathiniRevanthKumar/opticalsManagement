@@ -6,33 +6,29 @@ import { useSelector } from "react-redux";
 import { routes } from "../../helpers/routes";
 
 const Sidebar = ({ isSidebarOpen }) => {
-  const sidebarElements = ["Home", "Stock"];
+  const sidebarElements = ["Home", "Stock", "Orders"];
   const location = useLocation();
   const [activeElement, setActiveElement] = useState("Home");
   const auth = useSelector((state) => state.auth);
-    
-  if ((auth.isAuthenticated && auth.user.role === "super-admin")) {
+
+  if (auth.isAuthenticated && auth.user.role === "super-admin") {
     sidebarElements.push("Settings");
   }
 
   useEffect(() => {
-    if (location.pathname === routes.protectedRoutes.home) {
-      setActiveElement("Home");
-      return;
-    }
-    if(location.pathname === routes.protectedRoutes.stocks)
-    {
-      setActiveElement("Stock");
-      return;
-    }
-    if(location.pathname === routes.protectedRoutes.settings)
-    {
-      setActiveElement("Settings");
-      return;
-    }
-    
-  }, [location]);
+    const [currentRoute] = Object.entries(routes.protectedRoutes).filter(
+      (item) => item[1] === location.pathname
+    );
+    if (currentRoute) {
+      const selectedElement =
+        String(currentRoute[0]).substring(0, 1).toUpperCase() +
+        String(currentRoute[0]).substring(1);
 
+      setActiveElement(selectedElement);
+      return;
+    }
+    setActiveElement("Home");
+  }, [location]);
   return (
     <div
       className={`${

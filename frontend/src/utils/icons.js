@@ -10,11 +10,13 @@ import {
   Download,
   Mail,
   Close,
-  Settings,
+  SettingsOutlined as Settings,
   ArrowDropDown as DropDown,
   ArrowRight as DropUp,
   Error as Alert,
-  Store
+  Store,
+  ShoppingCart as Cart,
+  ShoppingCartOutlined as Orders
 } from "@mui/icons-material";
 
 import { FaGlasses as Frame } from "react-icons/fa6";
@@ -36,7 +38,9 @@ const icons = {
   DropDown,
   DropUp,
   Alert,
-  Store
+  Store,
+  Cart,
+  Orders
 };
 
 export default icons;

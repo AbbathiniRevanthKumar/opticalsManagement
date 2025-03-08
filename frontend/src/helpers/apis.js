@@ -30,6 +30,10 @@ const apis = {
   getLensLowStockDetails: "/products/lens/getLensLowStockDetails",
   getLensDetailsByLensName : "/products/lens/getLensDetailsByLensName",
   updateLensQty : "/products/lens/updateLensQty",
+
+  //utils
+  //mail
+  sendMail : "/utils/sendMail",
 };
 
 export default apis;

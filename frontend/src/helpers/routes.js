@@ -2,7 +2,8 @@ export const routes = {
   app: "/",
   protectedRoutes: {
     home: "/app/home",
-    stocks: "/app/stock",
+    stock: "/app/stock",
     settings: "/app/settings",
+    Orders : "/app/orders",
   },
 };

@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import icons from "../../utils/icons";
 import { notify } from "../notifier/Notifier";
 import SearchBar from "../layouts/SearchBar";
+import api from "../../helpers/api";
+import { useSelector } from "react-redux";
+import Loader from "./Loader";
 
 const Table = (props) => {
   const {
@@ -25,6 +28,8 @@ const Table = (props) => {
   const [rowData, setRowData] = useState(data);
   const [search, setSearch] = useState(searchValue);
   const [totalNoOfPages, setTotalNoOfPages] = useState(0);
+  const { user } = useSelector((state) => state.auth);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setSearch(searchValue);
@@ -76,15 +81,11 @@ const Table = (props) => {
     setRowData(filteredData);
     setCurrentPage(1);
   };
-  const onClick = (type, data) => {    
+  const onClick = (type, data) => {
     onClickRow(type, data);
   };
 
-  const downloadData = () => {
-    if (!data || data.length === 0) {
-      notify.error("No data available to download.");
-      return;
-    }
+  const generateCSV = () => {
     const headers = columns.map((col) => col.header).join(",") + "\n";
     const rows = data
       .map((row) =>
@@ -94,22 +95,58 @@ const Table = (props) => {
       )
       .join("\n");
 
-    const csvContent = `data:text/csv;charset=utf-8,${headers}${rows}`;
+    const csvContent = `${headers}${rows}`;
+    const csvBlob = new Blob([csvContent], { type: "text/csv" });
+    return csvBlob;
+  };
+
+  const downloadData = () => {
+    if (!data || data.length === 0) {
+      notify.error("No data available to download.");
+      return;
+    }
+    //generate csv
+    const csvBlob = generateCSV();
     const file = fileName + "_" + Date.now();
-    const encodedUri = encodeURI(csvContent);
+    const encodedUrl = URL.createObjectURL(csvBlob);
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    link.setAttribute("href", encodedUrl);
     link.setAttribute("download", file);
     document.body.appendChild(link);
-
     link.click();
-
     document.body.removeChild(link);
   };
 
-  const mailData = () => {};
+  const mailData = async () => {
+    setLoading(true);
+    const date = new Date().toLocaleDateString();
+    const csvBlob = generateCSV();
+
+    const formData = new FormData();
+    const subject = `${date} : ${fileName}`;
+    const htmlText = `<h4>Hi ${user?.username || "Admin"} ,</h1>
+    <p>Please find the attached document for the requested product data.</p>
+    <p>Thanks & Regards ,</p>
+    <p>Mahesh Opticals</p>
+    <h5>See you again!</h5>
+    `;
+    formData.append("subject", subject);
+    formData.append("htmlBody", htmlText);
+    formData.append("mailBody", "");
+    formData.append("file", csvBlob, fileName);
+    const resposne = await api.sendMail(formData);
+    if (resposne.success) {
+      notify.success(resposne.message);
+      setLoading(false);
+      return;
+    }
+    setLoading(false);
+    notify.error(resposne.message);
+  };
+
   return (
     <div className="py-2 flex flex-col gap-2">
+      {loading && <Loader />}
       <div className="flex flex-col md:flex-row justify-between items-center basis-2/4 gap-2">
         <div className="px-4 py-2 flex justify-center basis-2/4">
           <div className="flex gap-2 items-center w-full ">
@@ -234,7 +271,7 @@ const Table = (props) => {
           <div>
             showing{" "}
             <span className="font-semibold">
-              {totalRows>0 ? (currentPage - 1) * size + 1 : 0}
+              {totalRows > 0 ? (currentPage - 1) * size + 1 : 0}
             </span>{" "}
             to{" "}
             <span className="font-semibold">
@@ -244,8 +281,12 @@ const Table = (props) => {
           </div>
           <span>{"|"}</span>
           <div>
-            Page <span className="font-semibold">{currentPage}{" "}</span>
-            of <span className="font-semibold">{" "}{totalNoOfPages===0 ? 1 : totalNoOfPages}</span>
+            Page <span className="font-semibold">{currentPage} </span>
+            of{" "}
+            <span className="font-semibold">
+              {" "}
+              {totalNoOfPages === 0 ? 1 : totalNoOfPages}
+            </span>
           </div>
         </div>
         <div className="flex gap-2">
