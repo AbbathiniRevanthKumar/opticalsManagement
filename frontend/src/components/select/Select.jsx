@@ -7,7 +7,7 @@ const Select = (props) => {
       <select
         id={id}
         type="text"
-        className="input-box w-full h-full"
+        className="input-box w-full h-full py-1 "
         value={value}
         onChange={(e) => {
           onChange(e);

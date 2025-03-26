@@ -16,7 +16,8 @@ import {
   Error as Alert,
   Store,
   ShoppingCart as Cart,
-  ShoppingCartOutlined as Orders
+  ShoppingCartOutlined as Orders,
+  RemoveShoppingCartOutlined as EmptyCart
 } from "@mui/icons-material";
 
 import { FaGlasses as Frame } from "react-icons/fa6";
@@ -40,7 +41,8 @@ const icons = {
   Alert,
   Store,
   Cart,
-  Orders
+  Orders,
+  EmptyCart
 };
 
 export default icons;

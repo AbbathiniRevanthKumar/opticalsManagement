@@ -1,7 +1,10 @@
-CREATE TABLE admin_users (
+CREATE TABLE admin_users(
     id SERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    created_at DATE DEFAULT CURRENT_DATE
+    username VARCHAR(55) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    password TEXT NOT NULL,
+    role VARCHAR(155) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status INT DEFAULT 1
 );

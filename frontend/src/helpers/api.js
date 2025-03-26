@@ -26,9 +26,9 @@ const api = {
       return error.response.data;
     }
   },
-  fetchFrameProducts: async () => {
+  fetchFrameProducts: async (code="") => {
     try {
-      const response = await axios.get(apis.frameProducts);
+      const response = await axios.get(apis.frameProducts + `?frameCode=${code}`);
       return response.data;
     } catch (error) {
       return error.response.data;
@@ -148,9 +148,9 @@ const api = {
 
   //lens
 
-  getLensDetails: async () => {
+  getLensDetails: async (code="") => {
     try {
-      const response = await axios.get(apis.getLensDetails);
+      const response = await axios.get(apis.getLensDetails+`?code=${code}`);
       return response.data;
     } catch (error) {
       return error.response.data;

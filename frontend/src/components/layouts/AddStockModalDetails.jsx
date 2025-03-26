@@ -4,21 +4,20 @@ import Loader from "./Loader";
 import { notify } from "../notifier/Notifier";
 import { useDispatch } from "react-redux";
 import { framesChanged, lensChanged } from "../../store/slices/productSlice";
+import { addToCart } from "../../store/slices/productCartSlice";
 
 const AddStockModalDetails = (props) => {
-  const { item, type } = props;
+  const { item, type, action, onClose } = props;
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const getDetailsByItemName = async () => {
+    const getDetailsByItem = async () => {
       let response = null;
       setLoading(true);
-      if (type === "frames")
-        response = await api.getFrameDetailsByFrameName(item.name);
-      if (type === "lens")
-        response = await api.getLensDetailsByLensName(item.name);
+      if (type === "frames") response = await api.fetchFrameProducts(item.code);
+      if (type === "lens") response = await api.getLensDetails(item.code);
 
       if (response?.success) {
         setData(response.data);
@@ -27,7 +26,7 @@ const AddStockModalDetails = (props) => {
       }
       setData([]);
     };
-    getDetailsByItemName();
+    getDetailsByItem();
   }, [item]);
 
   const handleChange = (value, index) => {
@@ -39,7 +38,31 @@ const AddStockModalDetails = (props) => {
     }
   };
 
+  const handleAddToCart = (product) => {
+    let payload = {
+      code: product?.f_code || product?.l_code,
+      qty: product?.f_qty || product?.l_qty,
+      name: product?.f_name || product?.l_name,
+      model: product?.f_model_name || product?.l_model,
+      material: product?.f_material_name || product?.l_material,
+      size: product?.f_size || null,
+      type: product?.l_type || null,
+      sight: product?.spherical
+        ? {
+            sph: product.spherical,
+            cyl: product.cylinder,
+            add: product.addition,
+          }
+        : null,
+      productType: product?.f_code ? "Frames" : "Lens",
+    };
+    dispatch(addToCart(payload));
+    notify.success("Added to cart");
+    onClose();
+  };
+
   const handleQtyUpdate = async (product) => {
+    if (action === "order") return handleAddToCart(product);
     let body = {
       code: product?.f_code || product?.l_code,
       qty: product.f_qty || product?.l_qty,
@@ -94,7 +117,7 @@ const AddStockModalDetails = (props) => {
                   <input
                     type="text"
                     className="outline-none bg-transparent w-full border-b border-black text-center px-2 text-danger text-lg font-semibold"
-                    value={product?.f_qty || product?.l_qty}
+                    value={product?.f_qty || product?.l_qty || ""}
                     autoFocus
                     onChange={(e) => handleChange(e.target.value, index)}
                   />
@@ -104,7 +127,7 @@ const AddStockModalDetails = (props) => {
                     className="btn py-1 px-4 w-fit"
                     onClick={() => handleQtyUpdate(product)}
                   >
-                    update
+                    {action === "order" ? "Add to cart" : "Update"}
                   </button>
                 </div>
               </div>

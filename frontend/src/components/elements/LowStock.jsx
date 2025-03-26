@@ -1,23 +1,58 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import icons from "../../utils/icons";
 import Modal from "../Modal/Modal";
 import AddStockModalDetails from "../layouts/AddStockModalDetails";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { routes } from "../../helpers/routes";
 
 const LowStock = (props) => {
   const { data, header, type } = props;
   const [showModal, setShowModal] = useState(false);
   const [clickedItem, setClickedItem] = useState(null);
+  const [modalHeader, setModalHeader] = useState("");
+  const [action, setAction] = useState("");
+  const [filteredData, setFilteredData] = useState(data);
+  const { cartProducts, count } = useSelector((state) => state.productCart);
+  const navigate = useNavigate();
 
-  const handlePlaceOrder = (item) => {};
+  const classifyData = () => {
+    const classifiedData = [...data];
+    data.map((item, index) => {
+      if (cartProducts.find((product) => product.code === item.code)) {
+        classifiedData[index] = { ...item, inCart: true };
+        return;
+      }
+      classifiedData[index] = { ...item, inCart: false };
+    });
+    return classifiedData;
+  };
+
+  useEffect(() => {
+    const classifiedData = classifyData();
+    setFilteredData(classifiedData);
+  }, [count, data]);
+
+  const handlePlaceOrder = (item) => {
+    setClickedItem(item);
+    setShowModal(true);
+    setModalHeader(`Order Stock of ${item?.name}`);
+    setAction("order");
+  };
 
   const handleAddStock = async (item) => {
     setClickedItem(item);
     setShowModal(true);
+    setModalHeader(`Add Stock of ${item?.name}`);
+    setAction("add");
   };
 
+  const handleClickCart = () => {
+    navigate(routes.protectedRoutes.Orders, { state: { type: "stock" } });
+  };
   return (
     <>
-      {data.length > 0 ? (
+      {filteredData.length > 0 ? (
         <div className="w-full bg-secondary p-2 rounded-lg h-96 overflow-auto">
           {/* Fixed Header */}
           <div
@@ -25,12 +60,13 @@ const LowStock = (props) => {
             sticky top-0 z-10"
           >
             {header}
+            <div>[ {filteredData.length} ]</div>
             {<icons.Alert />}
           </div>
 
           {/* Scrollable Content */}
           <div className="flex flex-col gap-2 w-full p-2">
-            {data.map((item, index) => {
+            {filteredData.map((item, index) => {
               return (
                 <div
                   key={index}
@@ -47,15 +83,27 @@ const LowStock = (props) => {
                       </div>
                     </div>
                     <div className="flex justify-end gap-2 items-center">
-                      <button
-                        className="btn w-fit px-4 py-1 text-sm rounded-lg bg-primary bg-opacity-80 text-black font-medium flex items-center justify-center"
-                        onClick={() => handlePlaceOrder(item)}
-                      >
-                        <div className="lg:hidden">
-                          <icons.Store fontSize="small" />
-                        </div>
-                        <div className="hidden lg:flex">{"Place Order"}</div>
-                      </button>
+                      {!item.inCart ? (
+                        <button
+                          className="btn w-fit px-4 py-1 text-sm rounded-lg bg-primary bg-opacity-80 text-black font-medium flex items-center justify-center"
+                          onClick={() => handlePlaceOrder(item)}
+                        >
+                          <div className="lg:hidden">
+                            <icons.Store fontSize="small" />
+                          </div>
+                          <div className="hidden lg:flex">{"Place Order"}</div>
+                        </button>
+                      ) : (
+                        <button
+                          className="btn w-fit px-4 py-1 text-sm rounded-lg bg-success bg-opacity-80 text-black font-medium flex items-center justify-center"
+                          onClick={handleClickCart}
+                        >
+                          <div className="lg:hidden">
+                            <icons.Cart fontSize="small" />
+                          </div>
+                          <div className="hidden lg:flex">{"View in Cart"}</div>
+                        </button>
+                      )}
                       <button
                         className="btn w-fit px-4 py-1 text-sm rounded-lg bg-primary bg-opacity-80 text-black font-medium flex items-center justify-center"
                         onClick={() => handleAddStock(item)}
@@ -78,13 +126,21 @@ const LowStock = (props) => {
       {showModal && (
         <div>
           <Modal
-            header={`Add Stock of ${clickedItem?.name}`}
+            header={modalHeader}
             onCloseModal={() => {
               setShowModal(false);
               setClickedItem(null);
             }}
           >
-            <AddStockModalDetails item={clickedItem} type={type} />
+            <AddStockModalDetails
+              item={clickedItem}
+              type={type}
+              action={action}
+              onClose={() => {
+                setShowModal(false);
+                setClickedItem(null);
+              }}
+            />
           </Modal>
         </div>
       )}

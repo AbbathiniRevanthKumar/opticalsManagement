@@ -5,7 +5,7 @@ exports.addOrUpdateMaterialType = async (materialDetails) => {
     VALUES ($1, $2, CURRENT_TIMESTAMP)
     ON CONFLICT (f_material_code) 
     DO UPDATE
-      SET updated_at = EXCLUDED.updated_at, f_material_name = EXCLUDED.f_material_name
+      SET updated_at = EXCLUDED.updated_at, f_material_name = EXCLUDED.f_material_name,status = 1
     RETURNING id;`;
 
   const materialCodeQuery = `UPDATE frame_material_types
@@ -18,7 +18,9 @@ exports.addOrUpdateMaterialType = async (materialDetails) => {
   );
 
   if (isMaterialExists.length > 0) {
-    throw new Error("Material Type already exists!");
+    if (isMaterialExists[0].status == 1)
+      throw new Error("Material Type already exists!");
+    else materialDetails.materialCode = isMaterialExists[0].f_material_code;
   }
 
   try {
@@ -52,7 +54,7 @@ exports.addOrUpdateModelType = async (modelDetails) => {
     VALUES ($1, $2, CURRENT_TIMESTAMP)
     ON CONFLICT (f_model_code) 
     DO UPDATE
-      SET updated_at = EXCLUDED.updated_at, f_model_name = EXCLUDED.f_model_name
+      SET updated_at = EXCLUDED.updated_at, f_model_name = EXCLUDED.f_model_name,status = 1
     RETURNING id;`;
 
   const modelCodeQuery = `UPDATE frame_model_types
@@ -65,7 +67,9 @@ exports.addOrUpdateModelType = async (modelDetails) => {
   );
 
   if (isModelExists.length > 0) {
-    throw new Error("Model Type already exists!");
+    if (isModelExists[0].status == 1)
+      throw new Error("Model Type already exists!");
+    else modelDetails.modelCode = isModelExists[0].f_model_code;
   }
 
   try {
@@ -96,7 +100,7 @@ exports.addOrUpdateSize = async (sizeDetails) => {
     VALUES ($1, $2, CURRENT_TIMESTAMP)
     ON CONFLICT (f_size_code) 
     DO UPDATE
-      SET updated_at = EXCLUDED.updated_at, f_size = EXCLUDED.f_size
+      SET updated_at = EXCLUDED.updated_at, f_size = EXCLUDED.f_size,status = 1
     RETURNING id;`;
 
   const sizeCodeQuery = `UPDATE frame_sizes
@@ -109,7 +113,9 @@ exports.addOrUpdateSize = async (sizeDetails) => {
   );
 
   if (isSizeExists.length > 0) {
-    throw new Error("Frame size already exists!");
+    if (isSizeExists[0].status == 1)
+      throw new Error("Frame size already exists!");
+    else sizeDetails.sizeCode = isSizeExists[0].f_size_code;
   }
 
   try {
@@ -140,7 +146,7 @@ exports.addOrUpdateCompany = async (companyDetails) => {
     VALUES ($1, $2, CURRENT_TIMESTAMP)
     ON CONFLICT (f_company_code) 
     DO UPDATE
-      SET updated_at = EXCLUDED.updated_at, f_company_name = EXCLUDED.f_company_name
+      SET updated_at = EXCLUDED.updated_at, f_company_name = EXCLUDED.f_company_name,status = 1
     RETURNING id;`;
 
   const companyCodeQuery = `UPDATE frame_companies
@@ -153,7 +159,9 @@ exports.addOrUpdateCompany = async (companyDetails) => {
   );
 
   if (isCompanyExists.length > 0) {
-    throw new Error("Frame company already exists!");
+    if (isCompanyExists[0].status == 1)
+      throw new Error("Frame company already exists!");
+    else companyDetails.companyCode = isCompanyExists[0].f_company_code;
   }
 
   try {
@@ -242,19 +250,19 @@ exports.getFrameSubDetailsByProperty = async (property, id = false) => {
 exports.deleteFrameSubDetailsByProperty = async (property, id) => {
   switch (property) {
     case "materials": {
-      query = `UPDATE frame_material_types SET status = 0 WHERE id =${id}`;
+      query = `UPDATE frame_material_types SET status = 0,updated_at = CURRENT_TIMESTAMP WHERE id =${id}`;
       break;
     }
     case "models": {
-      query = `UPDATE  frame_model_types SET status = 0 WHERE id =${id}`;
+      query = `UPDATE  frame_model_types SET status = 0,updated_at = CURRENT_TIMESTAMP WHERE id =${id}`;
       break;
     }
     case "sizes": {
-      query = `UPDATE  frame_sizes SET status = 0 WHERE id =${id}`;
+      query = `UPDATE  frame_sizes SET status = 0,updated_at = CURRENT_TIMESTAMP WHERE id =${id}`;
       break;
     }
     case "companies": {
-      query = `UPDATE  frame_companies SET status = 0 WHERE id =${id}`;
+      query = `UPDATE  frame_companies SET status = 0,updated_at = CURRENT_TIMESTAMP WHERE id =${id}`;
       break;
     }
     default: {
@@ -274,7 +282,7 @@ exports.addFrameDetailsReferences = async (referenceDetails) => {
   ON CONFLICT (f_company_id,f_material_id,f_model_id, f_size_id) 
   DO UPDATE 
     SET
-    updated_at = CURRENT_TIMESTAMP
+    updated_at = CURRENT_TIMESTAMP,status=1
   RETURNING id `;
   await db.query("BEGIN");
   try {
@@ -373,11 +381,11 @@ exports.getFrameDetails = async (frameCode) => {
     SELECT a.*,b.f_company_id,b.f_material_id,b.f_model_id,b.f_size_id,c.f_material_name,d.f_model_name,e.f_purchase_price,e.f_sales_price,e.f_discount,f.f_size,g.f_company_name FROM frame_details a
     LEFT JOIN frame_details_reference_ids b ON
      a.f_reference_id = b.id
-    LEFT JOIN frame_material_types c ON c.id = b.f_material_id
-    LEFT JOIN frame_model_types d ON d.id = b.f_model_id
-    LEFT JOIN frame_prices e ON e.id = a.f_price_id
-    LEFT JOIN frame_sizes f ON f.id = b.f_size_id
-    LEFT JOIN frame_companies g ON g.id = b.f_company_id
+    JOIN frame_material_types c ON (c.id = b.f_material_id AND c.status = 1)
+    JOIN frame_model_types d ON (d.id = b.f_model_id AND d.status = 1 )
+    JOIN frame_prices e ON (e.id = a.f_price_id AND e.status = 1)
+    JOIN frame_sizes f ON( f.id = b.f_size_id AND f.status = 1)
+    JOIN frame_companies g ON (g.id = b.f_company_id AND g.status = 1)
     ${condition}
     ORDER BY a.updated_at DESC 
   `;
@@ -419,11 +427,11 @@ exports.getPurchaseDateTrends = async (type) => {
 };
 
 exports.getFrameLowStockDetails = async () => {
-  const query = `SELECT f_name AS name, SUM(f_qty) AS qty FROM frame_details 
+  const query = `SELECT f_code as code, f_name AS name, SUM(f_qty) AS qty FROM frame_details 
                   WHERE f_qty<10 AND status = 1 
-                  GROUP BY f_name 
+                  GROUP BY f_name,f_code 
                   HAVING SUM(f_qty) < 10
-                  ORDER BY qty ASC;`;
+                  ORDER BY f_name ASC,qty ASC;`;
   try {
     const { rows } = await db.query(query);
     return rows;
