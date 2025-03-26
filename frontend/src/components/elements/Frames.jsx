@@ -7,6 +7,7 @@ import AddFrames from "../layouts/AddFrames";
 import Modal from "../Modal/Modal";
 import { useDispatch, useSelector } from "react-redux";
 import { framesChanged } from "../../store/slices/productSlice";
+import { removeFromCart } from "../../store/slices/productCartSlice";
 import { notify } from "../notifier/Notifier";
 
 const Frames = (props) => {
@@ -57,6 +58,7 @@ const Frames = (props) => {
     const response = await api.deleteFrame(id);
     if (response.success) {
       dispatch(framesChanged(true));
+      dispatch(removeFromCart({code : id}));
       notify.success(response.message);
       return;
     }

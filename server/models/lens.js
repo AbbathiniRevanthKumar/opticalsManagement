@@ -5,7 +5,7 @@ exports.addLensTypes = async (details) => {
   const query = `INSERT INTO lens_types(l_type_code,l_type) VALUES($1,$2)
     ON CONFLICT(l_type_code)
     DO UPDATE 
-        SET l_type = EXCLUDED.l_type,updated_at = CURRENT_TIMESTAMP
+        SET l_type = EXCLUDED.l_type,status=1,updated_at = CURRENT_TIMESTAMP
     RETURNING id;
     `;
   const isAlreadyExists = `SELECT * FROM lens_types WHERE l_type = $1`;
@@ -15,7 +15,8 @@ exports.addLensTypes = async (details) => {
     details.lensType,
   ]);
   if (isExists.length > 0) {
-    throw new Error("Lens type already exists");
+    if (isExists[0].status === 1) throw new Error("Lens type already exists");
+    else details.typeCode = isExists[0].l_type_code;
   }
 
   try {
@@ -35,7 +36,7 @@ exports.addLensTypes = async (details) => {
     }
     return false;
   } catch (error) {
-    throw new Error("Error at adding lens type :", error.message);
+    throw new Error(`Error at adding lens type : ${error.message}`);
   }
 };
 
@@ -43,7 +44,7 @@ exports.addLensModels = async (details) => {
   const query = `INSERT INTO lens_models( l_model_code ,l_model ) VALUES($1,$2)
       ON CONFLICT(l_model_code)
       DO UPDATE 
-          SET l_model = EXCLUDED.l_model,updated_at = CURRENT_TIMESTAMP
+          SET l_model = EXCLUDED.l_model,updated_at = CURRENT_TIMESTAMP,status=1
       RETURNING id;
       `;
   const isAlreadyExists = `SELECT * FROM lens_models WHERE l_model = $1`;
@@ -53,7 +54,8 @@ exports.addLensModels = async (details) => {
     details.lensModel,
   ]);
   if (isExists.length > 0) {
-    throw new Error("Lens Model already exists");
+    if (isExists[0].status === 1) throw new Error("Lens Model already exists");
+    else details.modelCode = isExists[0].l_model_code;
   }
 
   try {
@@ -91,7 +93,9 @@ exports.addLensMaterials = async (details) => {
     details.lensMaterial,
   ]);
   if (isExists.length > 0) {
-    throw new Error("Lens Material already exists");
+    if (isExists[0].status === 1)
+      throw new Error("Lens Material already exists");
+    else details.materialCode = isExists[0].l_material_code;
   }
 
   try {
@@ -119,7 +123,7 @@ exports.addLensCompanies = async (details) => {
   const query = `INSERT INTO lens_companies(  l_company_code , l_company ) VALUES($1,$2)
           ON CONFLICT(l_company_code)
           DO UPDATE 
-              SET l_company = EXCLUDED.l_company,updated_at = CURRENT_TIMESTAMP
+              SET l_company = EXCLUDED.l_company,updated_at = CURRENT_TIMESTAMP,status=1
           RETURNING id;
           `;
   const isAlreadyExists = `SELECT * FROM lens_companies WHERE l_company = $1`;
@@ -129,7 +133,9 @@ exports.addLensCompanies = async (details) => {
     details.lensCompany,
   ]);
   if (isExists.length > 0) {
-    throw new Error("Lens Company already exists");
+    if (isExists[0].status === 1)
+      throw new Error("Lens Company already exists");
+    else details.companyCode = isExists[0].l_company_code;
   }
 
   try {
@@ -157,7 +163,7 @@ exports.addLensSightDetails = async (details) => {
   const query = `INSERT INTO lens_sight_details(spherical,addition,cylinder) VALUES($1,$2,$3) 
   ON CONFLICT(spherical,addition,cylinder) 
   DO UPDATE 
-    SET updated_at = CURRENT_TIMESTAMP
+    SET updated_at = CURRENT_TIMESTAMP,status=1
   RETURNING id;
   `;
 
@@ -181,7 +187,7 @@ exports.addLensPriceDetails = async (details) => {
   const query = `INSERT INTO lens_price_details(l_pruchase_price,l_sales_price,l_discount ) VALUES($1,$2,$3) 
   ON CONFLICT(l_pruchase_price,l_sales_price,l_discount) 
   DO UPDATE 
-    SET updated_at = CURRENT_TIMESTAMP
+    SET updated_at = CURRENT_TIMESTAMP,status=1
   RETURNING id;
   `;
 
@@ -206,7 +212,8 @@ exports.addLensReferenceIds = async (details) => {
   ON CONFLICT ( l_company_id ,l_type_id , l_model_id , l_material_id) 
   DO UPDATE 
     SET
-    updated_at = CURRENT_TIMESTAMP
+    updated_at = CURRENT_TIMESTAMP,
+    status  = 1
   RETURNING id`;
   try {
     const { rows } = await db.query(query, [
@@ -285,10 +292,12 @@ exports.checkLensDetailsExists = async (details) => {
   }
 };
 
-exports.getLensDetails = async (code) => {
+exports.getLensDetails = async (code = null) => {
   let condition = "WHERE a.status = 1";
   if (code) {
-    condition = ` AND l_code = '${String(code).toUpperCase()}'`;
+    condition = ` AND a.l_code = '${String(
+      code
+    ).toUpperCase()}' AND a.status = 1`;
   }
   const query = `SELECT a.*,b.l_material_id,b.l_model_id,b.l_type_id,b.l_company_id,c.l_material,d.l_model,e.l_type,f.l_company,g.l_pruchase_price,g.l_sales_price,g.l_discount,h.spherical,h.cylinder,h.addition
   FROM lens_details a
@@ -341,19 +350,19 @@ exports.deleteDetailsByProperty = async (property, id) => {
   let query = "";
   switch (property) {
     case "materials": {
-      query = `UPDATE lens_materials SET status = 0 WHERE id = ${id}`;
+      query = `UPDATE lens_materials SET status = 0,updated_at = CURRENT_TIMESTAMP WHERE id = ${id}`;
       break;
     }
     case "models": {
-      query = `UPDATE lens_models SET status = 0 WHERE id = ${id}`;
+      query = `UPDATE lens_models SET status = 0,updated_at = CURRENT_TIMESTAMP WHERE id = ${id}`;
       break;
     }
     case "types": {
-      query = `UPDATE lens_types SET status = 0 WHERE id = ${id}`;
+      query = `UPDATE lens_types SET status = 0,updated_at = CURRENT_TIMESTAMP WHERE id = ${id}`;
       break;
     }
     case "companies": {
-      query = `UPDATE lens_companies SET status = 0 WHERE id = ${id}`;
+      query = `UPDATE lens_companies SET status = 0,updated_at = CURRENT_TIMESTAMP WHERE id = ${id}`;
       break;
     }
   }
@@ -378,11 +387,11 @@ exports.deleteLensProduct = async (lensCode) => {
 };
 
 exports.getLensLowStockDetails = async () => {
-  const query = `SELECT l_name AS name, SUM(l_qty) AS qty FROM lens_details 
+  const query = `SELECT l_code as code,l_name AS name, SUM(l_qty) AS qty FROM lens_details 
                   WHERE l_qty<15 AND status = 1 
-                  GROUP BY l_name 
+                  GROUP BY l_name,l_code 
                   HAVING SUM(l_qty) < 15
-                  ORDER BY qty ASC;`;
+                  ORDER BY l_name ASC,qty ASC;`;
   try {
     const { rows } = await db.query(query);
 

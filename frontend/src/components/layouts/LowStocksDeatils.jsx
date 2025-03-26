@@ -8,7 +8,7 @@ const LowStocksDeatils = (props) => {
   const navigate = useNavigate();
 
   const handleMoreClick = () => {
-    navigate(routes.protectedRoutes.stocks, {
+    navigate(routes.protectedRoutes.stock, {
       state: { productType: type },
     });
   };

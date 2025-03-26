@@ -5,6 +5,7 @@ import columns from "../../helpers/colDef";
 import api from "../../helpers/api";
 import { useDispatch, useSelector } from "react-redux";
 import { lensChanged } from "../../store/slices/productSlice";
+import { removeFromCart } from "../../store/slices/productCartSlice";
 import Modal from "../Modal/Modal";
 import AddLens from "../layouts/AddLens";
 import { notify } from "../notifier/Notifier";
@@ -46,15 +47,16 @@ const Lens = ({ searchValue }) => {
       setModal(true);
     }
     if (type === "delete") {
-      deleteFrame(data.l_code);
+      deleteLens(data.l_code);
     }
   };
 
-  const deleteFrame = async (id) => {
+  const deleteLens = async (id) => {
     setLoading(true);
     const response = await api.deleteLens(id);
     if (response.success) {
       dispatch(lensChanged(true));
+      dispatch(removeFromCart({ code: id }));
       setLoading(false);
       notify.success(response.message);
       return;
