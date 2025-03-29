@@ -22,8 +22,8 @@ const Modal = (props) => {
   return (
     <div className="fixed top-0 right-0 bottom-0 left-0 bg-black bg-opacity-50 z-30 flex items-center justify-center p-4  overflow-hidden">
       <div className={`bg-secondary rounded-lg h-fit max-h-full w-full md:${width} shadow-sm overflow-auto flex flex-col justify-between modalLoader`}>
-        <div className="flex justify-between px-6 pt-4 bg-opacity-70 items-center sticky top-0 z-20 gap-4">
-          <div className="text-sm md:text-lg font-semibold bg-primary bg-opacity-90 px-6 py-2  rounded-full  text-center shadow-sm w-fit">
+        <div className="flex justify-between px-6 pt-4 bg-opacity-20 items-center sticky top-0 z-20 gap-4 ">
+          <div className="text-sm md:text-lg font-semibold bg-primary bg-opacity-90 px-6 py-2  rounded-full  text-center shadow-sm w-fit ">
             {header}
           </div>
           <button

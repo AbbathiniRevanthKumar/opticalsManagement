@@ -98,7 +98,7 @@ const AddLens = (props) => {
         models: modelOptions,
       });
     }
-  }, [lensDetails.typeDetails]);
+  }, [idDetails,lensDetails.typeDetails]);
 
   const setDetailsByProperty = async (property) => {
     const response = await api.getLensDetailsByProperty(property);

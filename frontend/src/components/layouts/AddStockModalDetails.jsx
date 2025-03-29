@@ -43,6 +43,7 @@ const AddStockModalDetails = (props) => {
       code: product?.f_code || product?.l_code,
       qty: product?.f_qty || product?.l_qty,
       name: product?.f_name || product?.l_name,
+      company : product?.f_company_name || product?.l_company,
       model: product?.f_model_name || product?.l_model,
       material: product?.f_material_name || product?.l_material,
       size: product?.f_size || null,

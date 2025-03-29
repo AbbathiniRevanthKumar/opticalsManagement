@@ -192,13 +192,11 @@ exports.getLensDetails = asyncHandler(async (req, res, next) => {
   const { code } = req.query;
 
   const results = await lens_model.getLensDetails(code);
-  if (results.length > 0) {
-    return res.status(200).json({
-      success: true,
-      data: results,
-    });
-  }
-  throw new Error("Cannot get lens details");
+
+  return res.status(200).json({
+    success: true,
+    data: results,
+  });
 });
 
 exports.getLensDetailsByProperty = asyncHandler(async (req, res, next) => {
@@ -247,7 +245,6 @@ exports.deleteLensProduct = asyncHandler(async (req, res, next) => {
   });
 });
 
-
 exports.getLensLowStockDetails = asyncHandler(async (req, res, next) => {
   const results = await lens_model.getLensLowStockDetails();
   if (results.length >= 0) {
@@ -265,7 +262,7 @@ exports.getLensDetailsByLensName = asyncHandler(async (req, res, next) => {
 
   lensName = lensName.trim();
   const lensDetails = await lens_model.getLensDetailsByLensName(lensName);
-  
+
   if (lensDetails.length == 0)
     return res.status(200).json({ success: true, data: lensDetails });
 

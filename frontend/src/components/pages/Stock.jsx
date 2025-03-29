@@ -104,7 +104,7 @@ const Stock = () => {
       {loading && <Loader />}
       <Header heading={"STOCK"} />
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-2">
-        <div className="flex flex-col  md:basis-1/2 gap-2 md:h-28  md:justify-between ">
+        <div className="flex flex-col w-full rounded-lg h-40 md:h-36 md:basis-1/2 justify-between">
           <div className="flex gap-2">
             <ClickableBtn
               active={productType === "frames" ? true : false}
@@ -144,7 +144,7 @@ const Stock = () => {
             />
             <div className="flex items-center justify-end text-secondary ">
               <button
-                className="btn w-fit p-1 md:p-2 shadow-sm text-black"
+                className="btn w-fit p-1 shadow-sm text-black"
                 onClick={() => setModal(true)}
               >
                 <icons.Add />

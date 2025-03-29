@@ -303,9 +303,9 @@ exports.getLensDetails = async (code = null) => {
   FROM lens_details a
   JOIN lens_reference_details b ON a.l_reference_id = b.id
   JOIN lens_materials c ON b.l_material_id = c.id
-  JOIN lens_models d ON b.l_model_id = d.id
-  JOIN lens_types e ON b.l_type_id = e.id
-  JOIN lens_companies f ON b.l_company_id =f.id
+  JOIN lens_models d ON b.l_model_id = d.id 
+  JOIN lens_types e ON b.l_type_id = e.id 
+  JOIN lens_companies f ON b.l_company_id =f.id 
   JOIN lens_price_details g ON a.l_price_id = g.id
   JOIN lens_sight_details h ON a.l_sight_id = h.id
   ${condition}

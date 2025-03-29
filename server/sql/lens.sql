@@ -1,4 +1,4 @@
-CREATE TABLE
+CREATE OR REPLACE TABLE
     lens_types (
         id SERIAL PRIMARY KEY,
         l_type_code VARCHAR(55) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE
         CONSTRAINT unique_type UNIQUE (l_type)
     );
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
     lens_materials (
         id SERIAL PRIMARY KEY,
         l_material_code VARCHAR(55) NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE
         CONSTRAINT unique_material UNIQUE (l_material)
     );
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
     lens_models (
         id SERIAL PRIMARY KEY,
         l_model_code VARCHAR(55) NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE
         CONSTRAINT unique_model UNIQUE (l_model)
     );
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
     lens_companies (
         id SERIAL PRIMARY KEY,
         l_company_code VARCHAR(55) NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE
         CONSTRAINT unique_lens_company UNIQUE (l_company)
     );
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
     lens_price_details (
         id SERIAL PRIMARY KEY,
         l_pruchase_price NUMERIC(10, 2) NOT NULL,
@@ -58,7 +58,7 @@ CREATE TABLE
         CONSTRAINT unique_lens_price_details UNIQUE (l_pruchase_price, l_sales_price, l_discount)
     );
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
     lens_sight_details (
         id SERIAL PRIMARY KEY,
         spherical VARCHAR(10) NOT NULL DEFAULT '-',
@@ -70,7 +70,7 @@ CREATE TABLE
         CONSTRAINT unique_sight_details UNIQUE (spherical, addition, cylinder)
     );
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
     lens_reference_details (
         id SERIAL PRIMARY KEY,
         l_company_id INT REFERENCES lens_companies (id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -88,11 +88,11 @@ CREATE TABLE
         )
     );
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
     lens_details (
         id SERIAL PRIMARY KEY,
         l_code VARCHAR(20) NOT NULL,
-        l_name VARCHAR(20) NOT NULL,
+        l_name VARCHAR(155) NOT NULL,
         l_reference_id INT REFERENCES lens_reference_details (id) ON DELETE CASCADE ON UPDATE CASCADE,
         l_extra_details TEXT,
         l_purchase_date DATE DEFAULT CURRENT_DATE,

@@ -4,6 +4,8 @@ import SearchBar from "../layouts/SearchBar";
 import Chip from "../layouts/Chip";
 import AddingChip from "../layouts/AddingChip";
 import { notify } from "../notifier/Notifier";
+import { useDispatch } from "react-redux";
+import { removeFromCartBySettings } from "../../store/slices/productCartSlice";
 
 const FrameSettings = () => {
   const [originalSettings, setOriginalSettings] = useState({
@@ -31,6 +33,7 @@ const FrameSettings = () => {
     type: "",
     count: 0,
   });
+  const dispatch = useDispatch();
 
   const setDetailsByProperty = async (property) => {
     try {
@@ -136,7 +139,7 @@ const FrameSettings = () => {
     notify.success(message.msg);
   };
 
-  const onDelete = async (settingName, id) => {
+  const onDelete = async (settingName, id,label) => {
     const response = await api.deleteFrameSubDetailsByProperty({
       property: settingName,
       id: id,
@@ -147,6 +150,12 @@ const FrameSettings = () => {
         type: settingName,
         count: propertyChanged.count + 1,
       });
+      dispatch(
+        removeFromCartBySettings({
+          setting: settingName,
+          value : label
+        })
+      );
       return;
     }
     notify.error(response.message);
@@ -198,7 +207,7 @@ const FrameSettings = () => {
                 onChipUpdated={(value) =>
                   handleItemAdded(setting, value, item.code)
                 }
-                handleDelete={() => onDelete(setting, item.value)}
+                handleDelete={() => onDelete(setting, item.value,item.label)}
               />
             ))}
             <div className="flex items-center  left-4 z-10">

@@ -17,7 +17,8 @@ const productCartSlice = createSlice({
         (item) => item.code === newItem.code
       );
       if (isItemExists >= 0) {
-        currentCart[isItemExists].qty = Number(currentCart[isItemExists].qty) +  Number(newItem.qty);
+        currentCart[isItemExists].qty =
+          Number(currentCart[isItemExists].qty) + Number(newItem.qty);
         //dont increase the count
         state.cartProducts = currentCart;
         localStorage.setItem("productCart", JSON.stringify(currentCart));
@@ -51,9 +52,43 @@ const productCartSlice = createSlice({
       state.cartProducts = currentCart;
       localStorage.setItem("productCart", JSON.stringify(currentCart));
     },
+    removeFromCartBySettings: (state, action) => {
+      let currentCart = [...state.cartProducts];
+      const { setting,value } = action.payload;
+
+      switch (setting) {
+        case "companies": {
+          currentCart = currentCart.filter((item) => item.company !== value);
+          break;
+        }
+        case "models": {
+          currentCart = currentCart.filter((item) => item.model !== value);
+          break;
+        }
+        case "materials": {
+          currentCart = currentCart.filter((item) => item.model !== value);
+          break;
+        }
+        case "sizes": {
+          currentCart = currentCart.filter((item) => item.size !== value);
+          break;
+        }
+        case "types": {
+          currentCart = currentCart.filter((item) => item.type !== value);
+          break;
+        }
+      }
+      state.cartProducts = currentCart;
+      state.count = currentCart.length;
+      localStorage.setItem("productCart", JSON.stringify(currentCart));
+    },
   },
 });
 
-export const { addToCart, removeFromCart, changeItemInCart } =
-  productCartSlice.actions;
+export const {
+  addToCart,
+  removeFromCart,
+  changeItemInCart,
+  removeFromCartBySettings,
+} = productCartSlice.actions;
 export default productCartSlice.reducer;

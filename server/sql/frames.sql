@@ -1,4 +1,4 @@
-CREATE TABLE
+CREATE OR REPLACE TABLE
     frame_material_types (
         id SERIAL PRIMARY KEY,
         f_material_code VARCHAR(55) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE
         CONSTRAINT unique_material_code UNIQUE (f_material_code)
     );
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
     frame_model_types (
         id SERIAL PRIMARY KEY,
         f_model_code VARCHAR(55) NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE
         CONSTRAINT unique_model_code UNIQUE (f_model_code)
     );
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
     frame_sizes (
         id SERIAL PRIMARY KEY,
         f_size_code VARCHAR(55) NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE
         CONSTRAINT unique_size_code UNIQUE (f_size_code)
     );
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
     frame_companies (
         id SERIAL PRIMARY KEY,
         f_company_code VARCHAR(55) NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE
         CONSTRAINT unique_company_code UNIQUE (f_company_code)
     );
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
     frame_prices (
         id SERIAL PRIMARY KEY,
         f_purchase_price NUMERIC(10, 2) NOT NULL,
@@ -58,7 +58,7 @@ CREATE TABLE
         CONSTRAINT unique_frame_price UNIQUE (f_purchase_price, f_sales_price, f_discount)
     );
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
     frame_details_reference_ids (
         id SERIAL PRIMARY KEY,
         f_company_id INT REFERENCES frame_companies (id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -76,7 +76,7 @@ CREATE TABLE
         )
     );
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
     frame_details (
         id SERIAL PRIMARY KEY,
         f_code VARCHAR(10) NOT NULL,

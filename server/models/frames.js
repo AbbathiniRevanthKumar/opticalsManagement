@@ -381,11 +381,11 @@ exports.getFrameDetails = async (frameCode) => {
     SELECT a.*,b.f_company_id,b.f_material_id,b.f_model_id,b.f_size_id,c.f_material_name,d.f_model_name,e.f_purchase_price,e.f_sales_price,e.f_discount,f.f_size,g.f_company_name FROM frame_details a
     LEFT JOIN frame_details_reference_ids b ON
      a.f_reference_id = b.id
-    JOIN frame_material_types c ON (c.id = b.f_material_id AND c.status = 1)
-    JOIN frame_model_types d ON (d.id = b.f_model_id AND d.status = 1 )
-    JOIN frame_prices e ON (e.id = a.f_price_id AND e.status = 1)
-    JOIN frame_sizes f ON( f.id = b.f_size_id AND f.status = 1)
-    JOIN frame_companies g ON (g.id = b.f_company_id AND g.status = 1)
+    JOIN frame_material_types c ON c.id = b.f_material_id 
+    JOIN frame_model_types d ON d.id = b.f_model_id 
+    JOIN frame_prices e ON e.id = a.f_price_id 
+    JOIN frame_sizes f ON f.id = b.f_size_id
+    JOIN frame_companies g ON g.id = b.f_company_id
     ${condition}
     ORDER BY a.updated_at DESC 
   `;
