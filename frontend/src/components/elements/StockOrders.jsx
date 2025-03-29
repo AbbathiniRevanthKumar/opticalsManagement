@@ -8,8 +8,9 @@ import {
 import { notify } from "../notifier/Notifier";
 import SearchBar from "../layouts/SearchBar";
 import EmptyCart from "./EmptyCart";
-import Select from "../select/Select";
+import Select from "../select/select";
 import AddItemsInEmptyCart from "./AddItemsInEmptyCart";
+
 const StockOrders = () => {
   const { cartProducts } = useSelector((state) => state.productCart);
   const dispatch = useDispatch();
@@ -72,8 +73,8 @@ const StockOrders = () => {
         {cartProducts.length > 0 ? (
           <div className="flex flex-col gap-4 pt-4 w-full ">
             {/* Search and Add button */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
-              <div className="flex flex-col md:flex-row items-center  gap-2">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2 w-full ">
+              <div className="flex flex-col md:flex-row items-center  gap-2 w-full">
                 <div className="w-full md:w-fit">
                   <SearchBar
                     placeholder="Search products"
@@ -94,9 +95,9 @@ const StockOrders = () => {
                   />
                 </div>
               </div>
-              <div className="w-full px-4 flex  justify-start md:justify-end">
+              <div className="w-full flex  justify-start md:justify-end">
                 <button
-                  className="btn w-fit sm:w-auto px-4"
+                  className="btn w-fit px-4 sm:w-auto "
                   onClick={onClickAdditems}
                 >
                   Add Items

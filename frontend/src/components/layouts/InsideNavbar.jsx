@@ -16,7 +16,7 @@ const InsideNavbar = (props) => {
 
   return (
     <div className="w-full">
-      <div className="grid  grid-cols-2 md:flex gap-2 items-end w-full place-items-center">
+      <div className="grid grid-cols-2 md:flex gap-2 items-end w-full md:place-items-center">
         {links.map((link, index) => {
           return (
             <div

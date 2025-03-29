@@ -11,9 +11,9 @@ const Orders = () => {
   return (
     <div className="flex flex-col gap-2">
       <Header heading={"Orders"} />
-      <div className="py-4 bg-secondary px-4 rounded-3xl min-h-[70vh] flex flex-col">
+      <div className="py-2 bg-secondary px-4 rounded-3xl min-h-[70vh] flex flex-col">
         {/* Navbar Section */}
-        <div className="py-2">
+        <div className="md:py-2">
           <InsideNavbar
             links={links}
             onChangeLink={(link) => setSelectedLink(link)}

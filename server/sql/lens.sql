@@ -92,7 +92,7 @@ CREATE TABLE
     lens_details (
         id SERIAL PRIMARY KEY,
         l_code VARCHAR(20) NOT NULL,
-        l_name VARCHAR(20) NOT NULL,
+        l_name VARCHAR(155) NOT NULL,
         l_reference_id INT REFERENCES lens_reference_details (id) ON DELETE CASCADE ON UPDATE CASCADE,
         l_extra_details TEXT,
         l_purchase_date DATE DEFAULT CURRENT_DATE,
