@@ -71,7 +71,6 @@ const AddFrames = (props) => {
       });
       return details;
     }
-    console.log(response.message);
     return [];
   };
 

@@ -4,6 +4,8 @@ import SearchBar from "../layouts/SearchBar";
 import Chip from "../layouts/Chip";
 import AddingChip from "../layouts/AddingChip";
 import { notify } from "../notifier/Notifier";
+import { useDispatch } from "react-redux";
+import { removeFromCartBySettings } from "../../store/slices/productCartSlice";
 
 const LensSettings = () => {
   const [originalLensSettings, setOriginalLensSettings] = useState({
@@ -31,6 +33,8 @@ const LensSettings = () => {
     type: "",
     count: 0,
   });
+
+  const dispatch = useDispatch();
 
   const setDetailsByProperty = async (property) => {
     try {
@@ -136,7 +140,7 @@ const LensSettings = () => {
     notify.success(message.msg);
   };
 
-  const onDelete = async (settingName, id) => {
+  const onDelete = async (settingName, id, label) => {
     const response = await api.deleteLensDetailsByProperty(settingName, id);
     if (response.success) {
       notify.success(response.message);
@@ -144,6 +148,12 @@ const LensSettings = () => {
         type: settingName,
         count: propertyChanged.count + 1,
       });
+      dispatch(
+        removeFromCartBySettings({
+          setting: settingName,
+          value: label,
+        })
+      );
       return;
     }
     notify.error(response.message);
@@ -195,7 +205,7 @@ const LensSettings = () => {
                 onChipUpdated={(value) =>
                   handleItemAdded(setting, value, item.code)
                 }
-                handleDelete={() => onDelete(setting, item.value)}
+                handleDelete={() => onDelete(setting, item.value, item.label)}
               />
             ))}
             <div className="flex items-center">

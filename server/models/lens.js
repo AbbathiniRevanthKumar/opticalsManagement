@@ -302,10 +302,10 @@ exports.getLensDetails = async (code = null) => {
   const query = `SELECT a.*,b.l_material_id,b.l_model_id,b.l_type_id,b.l_company_id,c.l_material,d.l_model,e.l_type,f.l_company,g.l_pruchase_price,g.l_sales_price,g.l_discount,h.spherical,h.cylinder,h.addition
   FROM lens_details a
   JOIN lens_reference_details b ON a.l_reference_id = b.id
-  JOIN lens_materials c ON (b.l_material_id = c.id AND c.status = 1)
-  JOIN lens_models d ON (b.l_model_id = d.id AND d.status = 1)
-  JOIN lens_types e ON (b.l_type_id = e.id AND e.status = 1)
-  JOIN lens_companies f ON (b.l_company_id =f.id AND f.status =1)
+  JOIN lens_materials c ON b.l_material_id = c.id
+  JOIN lens_models d ON b.l_model_id = d.id 
+  JOIN lens_types e ON b.l_type_id = e.id 
+  JOIN lens_companies f ON b.l_company_id =f.id 
   JOIN lens_price_details g ON a.l_price_id = g.id
   JOIN lens_sight_details h ON a.l_sight_id = h.id
   ${condition}
