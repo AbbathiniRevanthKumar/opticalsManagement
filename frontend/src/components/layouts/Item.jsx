@@ -47,9 +47,12 @@ const Item = (props) => {
       className="bg-gray-200 p-2 rounded-lg flex flex-col gap-2"
       key={productCode}
     >
-      <div className="grid grid-cols-2 lg:grid-cols-8 gap-2 w-full justify-between items-center">
+      <div className="grid grid-cols-2 lg:grid-cols-10 gap-2 w-full justify-between items-center">
         <div className="col-span-1 flex lg:justify-center items-center">
           {productCode}
+        </div>
+        <div className="col-span-2 flex lg:justify-start items-center">
+          {product?.f_name || product?.l_name}
         </div>
         <div className="col-span-2 flex lg:justify-start items-center">
           {product?.f_company_name || product?.l_company}
@@ -66,7 +69,7 @@ const Item = (props) => {
         <div className="col-span-1 w-16 flex justify-start md:justify-center items-center">
           {product?.f_qty || product?.l_qty || ""}
         </div>
-        <div className="col-span-2 md:col-span-1">
+        <div className="col-span-1 md:col-span-1">
           <button
             className={`btn py-1 px-4 md:w-full ${
               productInCart ? "bg-danger" : "bg-primary"

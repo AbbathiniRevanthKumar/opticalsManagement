@@ -83,7 +83,7 @@ exports.addLensMaterials = async (details) => {
   const query = `INSERT INTO lens_materials( l_material_code , l_material ) VALUES($1,$2)
         ON CONFLICT(l_material_code)
         DO UPDATE 
-            SET l_material_code = EXCLUDED.l_material,updated_at = CURRENT_TIMESTAMP
+            SET l_material_code = EXCLUDED.l_material,updated_at = CURRENT_TIMESTAMP,status=1
         RETURNING id;
         `;
   const isAlreadyExists = `SELECT * FROM lens_materials WHERE l_material = $1`;

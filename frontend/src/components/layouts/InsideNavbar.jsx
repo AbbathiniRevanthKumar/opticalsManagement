@@ -7,7 +7,7 @@ const InsideNavbar = (props) => {
   useEffect(() => {
     setActiveLink(links[0]);
     onChangeLink(links[0]);
-  }, [links]);
+  }, []);
 
   const handleChangeLink = (link) => {
     setActiveLink(link);
@@ -25,7 +25,7 @@ const InsideNavbar = (props) => {
                 activeLink === link
                   ? "bg-primary  text-secondary"
                   : "bg-secondary"
-              } flex items-end justify-center  px-4 rounded-full transition-all ease-in duration-200 cursor-pointer w-fit`}
+              } flex items-end justify-center  px-4 rounded-full transition-all ease-in duration-200 cursor-pointer w-full md:w-fit`}
               onClick={() => handleChangeLink(link)}
             >
               {link.toUpperCase()}

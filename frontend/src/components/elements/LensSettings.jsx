@@ -6,6 +6,7 @@ import AddingChip from "../layouts/AddingChip";
 import { notify } from "../notifier/Notifier";
 import { useDispatch } from "react-redux";
 import { removeFromCartBySettings } from "../../store/slices/productCartSlice";
+import InsideNavbar from "../layouts/InsideNavbar";
 
 const LensSettings = () => {
   const [originalLensSettings, setOriginalLensSettings] = useState({
@@ -33,6 +34,7 @@ const LensSettings = () => {
     type: "",
     count: 0,
   });
+  const [activeTab, setActiveTab] = useState(Object.keys(lensSettings)[0]);
 
   const dispatch = useDispatch();
 
@@ -177,48 +179,58 @@ const LensSettings = () => {
     setLensSettings((prev) => ({ ...prev, [setting]: filteredItems }));
   };
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
+
   return (
-    <div className="flex flex-col gap-2 overflow-hidden items-start w-full justify-between shadow-md rounded-lg">
-      {Object.entries(lensSettings).map(([setting, items]) => (
-        <div className="w-full bg-background rounded-t-xl" key={setting}>
-          <div className="p-2 border-b rounded-t-xl shadow-sm flex flex-col md:flex-row justify-between gap-2 md:gap-4 md:items-center">
-            <div className="bg-secondary px-4 py-1 rounded-lg shadow-sm w-fit text-start">
-              {setting.toUpperCase()}
-            </div>
-            <div className="w-full md:basis-1/3 lg:basis-1/6">
-              <SearchBar
-                value={searchValue[setting]}
-                onChangeSearch={(value) => {
-                  handleSearch(setting, value);
-                }}
-              />
-            </div>
-          </div>
-          <div className="px-4 bg-secondary py-4 grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 md:gap-4 max-h-96 overflow-auto">
-            {items.map((item) => (
-              <Chip
-                key={item.value}
-                item={item}
-                setting={setting}
-                focusItem={focusItem}
-                setFocusItem={setFocusItem}
-                onChipUpdated={(value) =>
-                  handleItemAdded(setting, value, item.code)
-                }
-                handleDelete={() => onDelete(setting, item.value, item.label)}
-              />
-            ))}
-            <div className="flex items-center">
-              <AddingChip
-                setting={setting}
-                onChipAdded={(value) => handleItemAdded(setting, value, "")}
-                focusItem={focusItem}
-                setFocusItem={setFocusItem}
-              />
-            </div>
+    <div className="flex flex-col gap-2 overflow-hidden items-start w-full justify-start min-h-96">
+      <div className="px-4 flex flex-col py-4 md:py-0 gap-2 md:flex-row items-center justify-between w-full bg-background rounded-lg shadow-sm">
+        <div className="px-4">
+          <InsideNavbar
+            links={Object.keys(lensSettings)}
+            onChangeLink={handleTabChange}
+          />
+        </div>
+        <div className="p-2 flex flex-col md:flex-row justify-between gap-2 md:gap-4 md:items-center">
+          <div className="w-full">
+            <SearchBar
+              value={searchValue[activeTab]}
+              onChangeSearch={(value) => {
+                handleSearch(activeTab, value);
+              }}
+            />
           </div>
         </div>
-      ))}
+      </div>
+      <div
+        className="w-full bg-background rounded-t-xl"
+        key={activeTab + "lens"}
+      >
+        <div className="px-4 bg-secondary py-4 grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 md:gap-4 max-h-96 overflow-auto">
+          {lensSettings[activeTab].map((item) => (
+            <Chip
+              key={item.value}
+              item={item}
+              setting={activeTab}
+              focusItem={focusItem}
+              setFocusItem={setFocusItem}
+              onChipUpdated={(value) =>
+                handleItemAdded(activeTab, value, item.code)
+              }
+              handleDelete={() => onDelete(activeTab, item.value, item.label)}
+            />
+          ))}
+          <div className="flex items-center">
+            <AddingChip
+              setting={activeTab}
+              onChipAdded={(value) => handleItemAdded(activeTab, value, "")}
+              focusItem={focusItem}
+              setFocusItem={setFocusItem}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -63,7 +63,7 @@ const AddItemsInEmptyCart = ({ onClose }) => {
           width="w-full"
         >
           <div className="p-4 flex flex-col gap-2">
-            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 sticky top-16 bg-secondary p-2 rounded-lg shadow-md">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 sticky top-16 bg-background p-2 rounded-lg shadow-md">
               <Toogle left="Frames" right="Lens" onChange={fetchProducts} />
               <div>
                 <SearchBar
